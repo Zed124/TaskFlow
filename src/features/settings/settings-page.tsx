@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/cn";
-import { ACCENTS, type Accent } from "@/domain/settings";
+import { ACCENTS, WEEK_STARTS, type Accent, type WeekStart } from "@/domain/settings";
 import { errorMessage } from "@/lib/errors";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Switch } from "@/components/ui/switch";
@@ -24,6 +24,7 @@ export function SettingsPage() {
   const [accent, setAccent, accentState] = useSetting("ui.accent");
   const [density, setDensity, densityState] = useSetting("ui.density");
   const [collapsed, setCollapsed, collapsedState] = useSetting("ui.sidebarCollapsed");
+  const [weekStart, setWeekStart] = useSetting("ui.weekStartsOn");
   const error = accentState.error ?? densityState.error ?? collapsedState.error;
 
   return (
@@ -86,6 +87,20 @@ export function SettingsPage() {
           htmlFor="sidebar-collapsed"
         >
           <Switch id="sidebar-collapsed" checked={collapsed} onCheckedChange={setCollapsed} />
+        </Row>
+      </Section>
+
+      <Section title={t("settings.calendar.title")}>
+        <Row label={t("settings.calendar.weekStart")} hint={t("settings.calendar.weekStartHint")}>
+          <SegmentedControl
+            aria-label={t("settings.calendar.weekStart")}
+            value={String(weekStart)}
+            onValueChange={(v) => setWeekStart(Number(v) as WeekStart)}
+            options={WEEK_STARTS.map((d) => ({
+              value: String(d),
+              label: t(`settings.calendar.days.${String(d) as "0" | "1" | "6"}`),
+            }))}
+          />
         </Row>
       </Section>
 

@@ -8,6 +8,9 @@ import { keys, useServiceQuery } from "@/app/data";
 import { useUiStore } from "@/app/ui-store";
 import { HIT_END, HIT_START, type SearchHit } from "@/db/repositories/search-repository";
 import { StatusIcon } from "@/features/tasks/components/status-icon";
+import { Kbd } from "@/components/ui/kbd";
+import { matchCommand, useCommands, type PaletteCommand } from "./use-commands";
+import { createElement } from "react";
 import { useTaskDrawer } from "@/features/tasks/use-task-drawer";
 
 /** Renders FTS highlight markers as <mark>. */
@@ -34,8 +37,12 @@ function Highlighted({ text }: { text: string }) {
 }
 
 const GROUP_ORDER: SearchHit["kind"][] = ["task", "project", "category", "note"];
+const GROUP_CLASS =
+  "mb-1 [&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-2xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-fg-subtle";
+const ITEM_CLASS =
+  "flex cursor-default items-center gap-2.5 rounded-sm px-2.5 py-2 text-sm text-fg data-[selected=true]:bg-hover";
 
-/** Ctrl+K: global full-text search. (Commands join this palette in Phase 4.) */
+/** Ctrl+K: commands (navigate, create, toggle) and global full-text search in one palette. */
 export function SearchDialog() {
   const { t } = useTranslation();
   const open = useUiStore((s) => s.searchOpen);
@@ -52,6 +59,27 @@ export function SearchDialog() {
     },
   );
   const visible = deferred.length > 0 ? hits : [];
+  const allCommands = useCommands();
+  const commands = (
+    deferred ? allCommands.filter((c) => matchCommand(c, deferred)) : allCommands
+  ).slice(0, deferred ? 6 : 12);
+
+  // Controlled selection: keep the user's highlighted item while it is still listed,
+  // otherwise highlight the first item so Enter always does something.
+  const [selected, setSelected] = useState("");
+  const values = [
+    ...commands.map((c) => `cmd:${c.id}`),
+    ...GROUP_ORDER.flatMap((kind) =>
+      visible.filter((h) => h.kind === kind).map((h) => `${h.kind}:${h.id}`),
+    ),
+  ];
+  const activeValue = values.includes(selected) ? selected : (values[0] ?? "");
+
+  const runCommand = (command: PaletteCommand) => {
+    setOpen(false);
+    setQuery("");
+    command.run();
+  };
 
   const choose = (hit: SearchHit) => {
     setOpen(false);
@@ -81,7 +109,13 @@ export function SearchDialog() {
           className="fixed top-[14vh] left-1/2 z-50 w-[min(640px,calc(100vw-32px))] -translate-x-1/2 animate-pop-in overflow-hidden rounded-lg border border-line-strong bg-surface shadow-popover focus:outline-none"
         >
           <D.Title className="sr-only">{t("topbar.search")}</D.Title>
-          <Command shouldFilter={false} loop label={t("topbar.search")}>
+          <Command
+            shouldFilter={false}
+            loop
+            label={t("topbar.search")}
+            value={activeValue}
+            onValueChange={setSelected}
+          >
             <div className="flex items-center gap-2.5 border-b border-line px-4">
               <Search className="size-4 shrink-0 text-fg-subtle" aria-hidden />
               <Command.Input
@@ -95,12 +129,28 @@ export function SearchDialog() {
               </kbd>
             </div>
             <Command.List className="max-h-[min(420px,60vh)] overflow-y-auto p-1.5">
-              {deferred.length === 0 ? (
-                <p className="px-3 py-6 text-center text-sm text-fg-subtle">{t("search.hint")}</p>
-              ) : (
-                <Command.Empty className="px-3 py-6 text-center text-sm text-fg-subtle">
-                  {t("search.empty", { query: deferred })}
-                </Command.Empty>
+              <Command.Empty className="px-3 py-6 text-center text-sm text-fg-subtle">
+                {t("search.empty", { query: deferred })}
+              </Command.Empty>
+              {commands.length > 0 && (
+                <Command.Group heading={t("commands.group")} className={GROUP_CLASS}>
+                  {commands.map((command) => (
+                    <Command.Item
+                      key={command.id}
+                      value={`cmd:${command.id}`}
+                      onSelect={() => runCommand(command)}
+                      className={ITEM_CLASS}
+                    >
+                      {createElement(command.icon, {
+                        className: "size-4 shrink-0 text-fg-subtle",
+                        strokeWidth: 1.75,
+                        "aria-hidden": true,
+                      })}
+                      <span className="min-w-0 flex-1 truncate">{command.label}</span>
+                      {command.shortcut && <Kbd keys={command.shortcut} />}
+                    </Command.Item>
+                  ))}
+                </Command.Group>
               )}
               {GROUP_ORDER.map((kind) => {
                 const group = visible.filter((h) => h.kind === kind);
@@ -109,14 +159,14 @@ export function SearchDialog() {
                   <Command.Group
                     key={kind}
                     heading={t(`search.groups.${kind}`)}
-                    className="mb-1 [&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-2xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-fg-subtle"
+                    className={GROUP_CLASS}
                   >
                     {group.map((hit) => (
                       <Command.Item
                         key={`${hit.kind}:${hit.id}`}
                         value={`${hit.kind}:${hit.id}`}
                         onSelect={() => choose(hit)}
-                        className="flex cursor-default items-center gap-2.5 rounded-sm px-2.5 py-2 text-sm text-fg data-[selected=true]:bg-hover"
+                        className={ITEM_CLASS}
                       >
                         <HitRow hit={hit} />
                       </Command.Item>

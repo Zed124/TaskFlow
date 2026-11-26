@@ -119,6 +119,7 @@ const SORT_SQL: Record<TaskSortField, (dir: "ASC" | "DESC") => string> = {
   created: (d) => `t.created_at ${d}`,
   updated: (d) => `t.updated_at ${d}`,
   title: (d) => `t.title COLLATE NOCASE ${d}, t.created_at DESC`,
+  completed: (d) => `t.completed_at IS NULL, t.completed_at ${d}, t.created_at DESC`,
 };
 
 /** Builds `WHERE …` + params for a TaskFilter. Exported for tests. */
@@ -186,6 +187,15 @@ export function buildTaskWhere(filter: TaskFilter): { where: string; params: Sql
         params.push(to);
       }
     }
+  }
+
+  if (filter.completed?.from) {
+    clauses.push("t.completed_at >= ?");
+    params.push(filter.completed.from);
+  }
+  if (filter.completed?.to) {
+    clauses.push("t.completed_at < ?");
+    params.push(filter.completed.to);
   }
 
   const fts = filter.text ? toFtsQuery(filter.text) : null;
@@ -266,6 +276,45 @@ export function createTaskRepository(db: SqlExecutor) {
         params,
       );
       return rows.map(mapListItem);
+    },
+
+    /**
+     * Top-level tasks relevant to a date window: due inside it, completed inside it, or in
+     * progress now. Feeds the Timeline view.
+     */
+    async listInWindow(window: {
+      fromDate: string;
+      toDate: string;
+      fromInstant: string;
+      toInstant: string;
+    }): Promise<TaskListItem[]> {
+      const rows = await db.select<TaskListRow>(
+        `SELECT ${LIST_COLUMNS} ${LIST_FROM}
+         WHERE t.deleted_at IS NULL AND t.archived_at IS NULL AND t.parent_id IS NULL
+           AND ((t.due_date >= ? AND t.due_date <= ?)
+             OR (t.completed_at >= ? AND t.completed_at < ?)
+             OR t.status = 'in_progress')
+         ORDER BY coalesce(t.due_date, substr(t.completed_at, 1, 10), substr(t.created_at, 1, 10)), t.created_at`,
+        [window.fromDate, window.toDate, window.fromInstant, window.toInstant],
+      );
+      return rows.map(mapListItem);
+    },
+
+    /** Sort orders of the given tasks (for computing a drop position). */
+    async sortOrders(ids: readonly string[]): Promise<Map<string, number>> {
+      if (ids.length === 0) return new Map();
+      const rows = await db.select<{ id: string; sort_order: number }>(
+        `SELECT id, sort_order FROM tasks WHERE id IN (${placeholders(ids.length)})`,
+        ids,
+      );
+      return new Map(rows.map((r) => [r.id, r.sort_order]));
+    },
+
+    /** Rewrites sort orders 1..n in the given order (used when fractional gaps run out). */
+    async renumber(ids: readonly string[]): Promise<void> {
+      for (const [i, id] of ids.entries()) {
+        await db.execute("UPDATE tasks SET sort_order = ? WHERE id = ?", [i + 1, id]);
+      }
     },
 
     /** Direct children, including archived ones; excludes deleted. */

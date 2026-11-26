@@ -43,7 +43,17 @@ tasks, projects, categories and notes. Deleting/archiving offers an immediate Re
 
 **Tests:** creation and editing, status changes, complete → reopen → complete preserving both completions, subtask relations, project and category moves, search and filters.
 
-## Phase 4 — Productivity interface 🏁
+## Phase 4 — Productivity interface 🏁 ✅
+
+Delivered: Dashboard (greeting + summary, productivity tiles and 14-day completion chart, quick add,
+Today / Overdue / Upcoming / In progress / Recently completed widgets; customize mode to reorder
+by drag or arrows and show/hide, persisted in settings); My Day (overdue, due today, completed
+today), Upcoming (by day, then Later), Overdue, In progress and Completed (by completion day);
+Board with pointer + keyboard drag-and-drop (status change recorded in history, fractional
+ordering with automatic renumbering); Calendar (month/week, week start setting, add on a day,
+"No due date" panel); Timeline (five-week Gantt from creation to due/completion, due and done
+markers, today line); Quick Add syntax with live token chips; command palette (navigate, create,
+open project, toggle sidebar/density) merged with full-text search.
 
 List view (sort, filter, density), smart lists (Today, Upcoming, Overdue, In Progress, Completed), Kanban (dnd-kit, persisted status + order, activity event), Calendar (month/week, unscheduled tray), Timeline (chronological by due date and history, undated section), Quick Add (inline + dialog), Command palette (`Ctrl+K`), and the Dashboard with configurable and reorderable widgets.
 

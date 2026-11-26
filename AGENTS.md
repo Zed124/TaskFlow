@@ -42,10 +42,11 @@ src/
                   ui-store.ts + toast-store.ts (zustand), layout/ (app-shell, sidebar, top-bar), pages/
   components/ui/  design-system primitives (Radix + Tailwind), no business logic
   features/<name>/ components/, use-*.ts hooks, <name>-service.ts (+ .test.ts). Exists: settings,
-                  tasks, projects, categories, activity, search. To come: dashboard, kanban, calendar,
-                  timeline, analytics, time-tracking, notifications, backup, undo, onboarding.
+                  tasks, projects, categories, activity, search (+ command palette), dashboard (stats),
+                  views (smart lists, board, calendar, timeline). To come: analytics, time-tracking,
+                  notifications, backup, undo, onboarding.
   domain/         pure types, Zod schemas, rules — no I/O (task, project, category, activity,
-                  task-filter, durations, colors, settings)
+                  task-filter, smart-lists, quick-add, dashboard, durations, colors, settings)
   db/             executor.ts (SqlExecutor + Database), drivers/ (tauri, node-test), migrator.ts,
                   migrations/NNNN_name.sql, repositories/ (one per aggregate + index.ts), sql.ts
                   (updateById, toFtsQuery), client.ts (app bootstrap)
@@ -55,6 +56,7 @@ src/
   styles/         index.css — Tailwind v4 tokens (colors, type, accent + density variables)
   test/           setup.ts, test-db.ts (fresh migrated in-memory DB)
 src-tauri/src/    lib.rs (setup, command registration), db.rs (rusqlite bridge), commands.rs
+scripts/          dev-inspect.ps1 + drive-webview.mjs (UI automation over DevTools)
 docs/             architecture, database, roadmap, manual-test-checklist
 ```
 
@@ -65,6 +67,8 @@ Adding a write use case: a service method that validates with Zod (`parseOrThrow
 activity via `record(...)`. Call it from the UI only through `useServiceMutation`, which refreshes
 queries and toasts errors. New activity event types need a payload schema in `domain/activity.ts`
 and a sentence in `features/activity/describe-event.ts`.
+Views: every list is a `TaskFilter` (see `domain/smart-lists.ts`); add a view by adding a filter,
+not a new query. Board moves go through `tasks.move` (status + position in one transaction).
 Task drawer: open any task with `useTaskDrawer().open(id)` (it sets `?task=<id>`).
 Adding a migration: create `src/db/migrations/NNNN_name.sql` (the next number) and extend `src/db/schema.test.ts`.
 Design tokens: use `bg-canvas/surface/raised/overlay`, `text-fg/fg-muted/fg-subtle`, `border-line/line-strong`, and `accent`, `accent-soft` and `accent-text`. Never use raw hex in components (the accent swatches on the Settings page are the one documented exception).
@@ -102,6 +106,8 @@ Design tokens: use `bg-canvas/surface/raised/overlay`, `text-fg/fg-muted/fg-subt
 - Accessibility: interactive elements are real buttons or links, have visible focus, are reachable by keyboard, and icon-only buttons have `aria-label`.
 
 ## Testing
+
+- **UI automation:** never send OS-level mouse or keyboard input; it can land in whatever window the owner is using. Start the app with `powershell -File scripts/dev-inspect.ps1` (DevTools on 127.0.0.1:9333, window doesn't take focus) and drive it with `node scripts/drive-webview.mjs 9333 steps.json` (eval, click, type, key, drag and screenshot steps, all dispatched inside the webview).
 
 - Service and repository tests run on the **real migrations** via the `node:sqlite` adapter. Each test gets a fresh in-memory DB.
 - Each bug fix gets a regression test where practical.

@@ -9,9 +9,29 @@ import { ProjectsPage } from "@/features/projects/projects-page";
 import { ProjectDetailPage } from "@/features/projects/project-detail-page";
 import { CategoriesPage } from "@/features/categories/categories-page";
 import { ActivityPage } from "@/features/activity/activity-page";
+import { DashboardPage } from "@/features/dashboard/dashboard-page";
+import {
+  CompletedPage,
+  InProgressPage,
+  OverduePage,
+  TodayPage,
+  UpcomingPage,
+} from "@/features/views/smart-list-pages";
+import { BoardPage } from "@/features/views/board-page";
+import { CalendarPage } from "@/features/views/calendar-page";
+import { TimelinePage } from "@/features/views/timeline-page";
 
 /** Pages that exist. Anything else in the sidebar renders its honest "planned" placeholder. */
 const PAGES: Partial<Record<string, ReactNode>> = {
+  dashboard: <DashboardPage />,
+  today: <TodayPage />,
+  upcoming: <UpcomingPage />,
+  overdue: <OverduePage />,
+  "in-progress": <InProgressPage />,
+  completed: <CompletedPage />,
+  board: <BoardPage />,
+  calendar: <CalendarPage />,
+  timeline: <TimelinePage />,
   tasks: <TasksPage />,
   projects: <ProjectsPage />,
   categories: <CategoriesPage />,

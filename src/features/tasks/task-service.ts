@@ -20,6 +20,8 @@ import { NotFoundError, ValidationError } from "@/lib/errors";
 import { newId } from "@/lib/ids";
 import { nowIso, toLocalDate, type Clock, type IsoInstant } from "@/lib/time";
 import { parseOrThrow } from "@/lib/validation";
+import { addDays } from "date-fns";
+import { parseLocalDate } from "@/lib/format";
 
 interface Ctx {
   r: Repositories;
@@ -134,6 +136,16 @@ export function createTaskService(db: SqlExecutor, clock: Clock) {
 
     get(id: string): Promise<Task | null> {
       return read.tasks.get(id);
+    },
+
+    /** Tasks for the Timeline: due or completed within [from, to] (local dates), or in progress. */
+    listTimeline(from: string, to: string): Promise<TaskListItem[]> {
+      return read.tasks.listInWindow({
+        fromDate: from,
+        toDate: to,
+        fromInstant: parseLocalDate(from).toISOString(),
+        toInstant: addDays(parseLocalDate(to), 1).toISOString(),
+      });
     },
 
     async getDetails(id: string): Promise<TaskDetails | null> {
@@ -294,6 +306,45 @@ export function createTaskService(db: SqlExecutor, clock: Clock) {
       return await write(async (ctx) => {
         const task = await requireTask(ctx.r, id);
         await applyStatus(ctx, task, status, options.undo ?? false);
+        return requireTask(ctx.r, id);
+      });
+    },
+
+    /**
+     * Board drop. `orderedIds` is the target column's final order including the moved task.
+     * The task gets a sort order between its new neighbours (one row written); when the
+     * fractional gap is exhausted the column is renumbered. A column change is a real status
+     * change, with intervals, completion records and an activity event.
+     */
+    async move(
+      id: string,
+      target: { status: TaskStatus; orderedIds: readonly string[] },
+    ): Promise<Task> {
+      const index = target.orderedIds.indexOf(id);
+      if (index < 0) throw new ValidationError("The moved task must be part of the target order");
+      if (!TASK_STATUSES.includes(target.status)) throw new ValidationError("Unknown status");
+      return await write(async (ctx) => {
+        const task = await requireTask(ctx.r, id);
+        const beforeId = target.orderedIds[index - 1];
+        const afterId = target.orderedIds[index + 1];
+        const orders = await ctx.r.tasks.sortOrders(
+          [beforeId, afterId].filter((x): x is string => !!x),
+        );
+        const before = beforeId ? orders.get(beforeId) : undefined;
+        const after = afterId ? orders.get(afterId) : undefined;
+
+        let sortOrder: number | null;
+        if (before !== undefined && after !== undefined) {
+          sortOrder = after - before > 1e-6 ? (before + after) / 2 : null;
+        } else if (before !== undefined) sortOrder = before + 1;
+        else if (after !== undefined) sortOrder = after - 1;
+        else sortOrder = task.sortOrder;
+
+        if (sortOrder === null) await ctx.r.tasks.renumber(target.orderedIds);
+        else if (sortOrder !== task.sortOrder)
+          await ctx.r.tasks.update(id, { sortOrder, updatedAt: ctx.now });
+
+        await applyStatus(ctx, task, target.status, false);
         return requireTask(ctx.r, id);
       });
     },

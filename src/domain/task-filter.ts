@@ -1,4 +1,4 @@
-import type { LocalDate } from "@/lib/time";
+import type { IsoInstant, LocalDate } from "@/lib/time";
 import type { TaskPriority, TaskStatus } from "./task";
 
 export const TASK_SORT_FIELDS = [
@@ -8,6 +8,7 @@ export const TASK_SORT_FIELDS = [
   "created",
   "updated",
   "title",
+  "completed",
 ] as const;
 export type TaskSortField = (typeof TASK_SORT_FIELDS)[number];
 
@@ -32,6 +33,8 @@ export interface TaskFilter {
     /** true: only tasks without a due date. false: only tasks with one. */
     none?: boolean;
   };
+  /** Bounds on the current completion instant (`completed_at`): from inclusive, to exclusive. */
+  completed?: { from?: IsoInstant; to?: IsoInstant };
   /** Free text, matched with full-text search across title, description, notes and task notes. */
   text?: string;
   /** Default false. */
@@ -51,6 +54,7 @@ export function isFilterEmpty(f: TaskFilter): boolean {
     !f.projectIds?.length &&
     !f.categoryIds?.length &&
     !f.due &&
+    !f.completed &&
     !f.text?.trim() &&
     !f.includeArchived
   );

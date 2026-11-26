@@ -38,7 +38,6 @@ export const navItems: readonly NavItem[] = [
     icon: LayoutDashboard,
     labelKey: "nav.dashboard",
     section: "main",
-    planned: { phase: 4, scope: "views" },
   },
   {
     id: "tasks",
@@ -53,7 +52,6 @@ export const navItems: readonly NavItem[] = [
     icon: Sun,
     labelKey: "nav.today",
     section: "main",
-    planned: { phase: 4, scope: "views" },
   },
   {
     id: "upcoming",
@@ -61,7 +59,6 @@ export const navItems: readonly NavItem[] = [
     icon: CalendarClock,
     labelKey: "nav.upcoming",
     section: "main",
-    planned: { phase: 4, scope: "views" },
   },
   {
     id: "overdue",
@@ -69,7 +66,6 @@ export const navItems: readonly NavItem[] = [
     icon: TriangleAlert,
     labelKey: "nav.overdue",
     section: "main",
-    planned: { phase: 4, scope: "views" },
   },
   {
     id: "in-progress",
@@ -77,7 +73,6 @@ export const navItems: readonly NavItem[] = [
     icon: CircleDot,
     labelKey: "nav.inProgress",
     section: "main",
-    planned: { phase: 4, scope: "views" },
   },
   {
     id: "completed",
@@ -85,7 +80,6 @@ export const navItems: readonly NavItem[] = [
     icon: CheckCircle2,
     labelKey: "nav.completed",
     section: "main",
-    planned: { phase: 4, scope: "views" },
   },
   {
     id: "calendar",
@@ -93,7 +87,6 @@ export const navItems: readonly NavItem[] = [
     icon: CalendarDays,
     labelKey: "nav.calendar",
     section: "main",
-    planned: { phase: 4, scope: "views" },
   },
   {
     id: "board",
@@ -101,7 +94,6 @@ export const navItems: readonly NavItem[] = [
     icon: SquareKanban,
     labelKey: "nav.board",
     section: "main",
-    planned: { phase: 4, scope: "views" },
   },
   {
     id: "timeline",
@@ -109,7 +101,6 @@ export const navItems: readonly NavItem[] = [
     icon: GanttChart,
     labelKey: "nav.timeline",
     section: "main",
-    planned: { phase: 4, scope: "views" },
   },
   {
     id: "projects",

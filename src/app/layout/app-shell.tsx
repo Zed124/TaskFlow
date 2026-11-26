@@ -7,6 +7,8 @@ import { useAppearanceSync } from "@/features/settings/appearance";
 import { SearchDialog } from "@/features/search/search-dialog";
 import { CreateTaskDialog } from "@/features/tasks/components/create-task-dialog";
 import { TaskDrawer } from "@/features/tasks/components/task-drawer";
+import { ProjectFormDialog } from "@/features/projects/components/project-form-dialog";
+import { useNavigate } from "react-router";
 import { findNavItem } from "../navigation";
 import { useUiStore } from "../ui-store";
 import { Sidebar } from "./sidebar";
@@ -25,6 +27,9 @@ export function AppShell() {
   const [collapsed, setCollapsed] = useSetting("ui.sidebarCollapsed");
   const setSearchOpen = useUiStore((s) => s.setSearchOpen);
   const openCreate = useUiStore((s) => s.openCreateTask);
+  const createProjectOpen = useUiStore((s) => s.createProjectOpen);
+  const setCreateProjectOpen = useUiStore((s) => s.setCreateProjectOpen);
+  const navigate = useNavigate();
   useAppearanceSync();
 
   useEffect(() => {
@@ -62,6 +67,12 @@ export function AppShell() {
       <TaskDrawer />
       <CreateTaskDialog />
       <SearchDialog />
+      {createProjectOpen && (
+        <ProjectFormDialog
+          onClose={() => setCreateProjectOpen(false)}
+          onSaved={(p) => void navigate(`/projects/${p.id}`)}
+        />
+      )}
       <Toaster />
     </div>
   );

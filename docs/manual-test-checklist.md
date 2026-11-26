@@ -43,6 +43,23 @@ Last run: 2026-11-26 by Claude, using window screenshots, synthetic clicks and k
 
 Last run: 2026-11-26 by Claude in `tauri dev`. T1–T8 passed, and the DB was inspected afterwards (3 completion records with the reopen preserved, user note stored as `source='user'`). T9–T13 have only been checked by the automated service tests, not by hand. The UI walk-through stopped because the owner was using the machine.
 
+## Productivity interface (Phase 4)
+
+| #   | Step                                                                           | Expected                                                                                                                                  |
+| --- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| V1  | My Day: Quick Add `Pay bill !urgent`                                           | Added with today's date (page default) and urgent priority. It appears under "Due today".                                                 |
+| V2  | Quick Add `Book flights tomorrow 10am !high @<project>`                        | Chips show the date, 10:00, High and the project before Enter. × on a chip keeps that word as text.                                       |
+| V3  | Board: drag a To do card into an empty Cancelled column, then back             | The card lands where the pointer is. Each column change adds a history event. A reorder within a column adds none.                        |
+| V4  | Board: focus a card with Tab, press Space, ArrowLeft/Right, Space              | The card moves columns from the keyboard alone, and the change persists.                                                                  |
+| V5  | Calendar: Month ↔ Week, Previous/Next/Today, "+" on a day                      | Tasks sit on their due day. "+N more" opens that week. "+" creates a task due that day. The "No due date" panel lists undated open tasks. |
+| V6  | Settings → Week starts on Sunday                                               | The Calendar, Timeline separators and "Completed this week" all follow it.                                                                |
+| V7  | Timeline: Earlier/Later/Today                                                  | Bars run from creation to the due date or completion. Diamonds mark due dates, dots mark completions, and a line marks today.             |
+| V8  | `Ctrl+K`, type `go bo`, Enter. Then `Ctrl+K`, type part of a task title, Enter | The first command navigates to the Board. The second opens the task's drawer.                                                             |
+| V9  | Dashboard → Customize: move a widget, hide one, Done, restart the app          | The order and visibility persist. Hidden widgets disappear outside customize mode.                                                        |
+| V10 | Leave the app open across midnight (or change the system date) and refocus it  | My Day, Overdue and the dashboard roll over to the new day without a reload.                                                              |
+
+Last run: 2026-11-26 by Claude in `tauri dev`, driven through `scripts/drive-webview.mjs` (no OS input). V1, V2, V3, V4, V5 (month view), V7, V8 and V9 passed, and the board moves were confirmed in the DB history. V6 and V10 were checked only by the automated tests (stats week start, day-keyed filters). Neither was walked through by hand.
+
 ## Windows integration (Phase 6)
 
 Covers tray, close-to-tray, single instance, autostart, and notifications. To be written with the feature.

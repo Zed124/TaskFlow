@@ -4,22 +4,17 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { isFilterEmpty, type TaskFilter } from "@/domain/task-filter";
-import { TaskRow } from "./task-row";
-import { useTaskDrawer } from "../use-task-drawer";
-import { useTaskActions } from "../use-task-actions";
+import { TaskRows } from "./task-rows";
 import { useTaskList } from "../use-task-list";
 
 interface TaskListProps {
   filter: TaskFilter;
   showProject?: boolean;
   onCreate?: () => void;
-  onCountChange?: (count: number) => void;
 }
 
 export function TaskList({ filter, showProject = true, onCreate }: TaskListProps) {
   const { t } = useTranslation();
-  const { open } = useTaskDrawer();
-  const { setStatus } = useTaskActions();
   const { data, isPending } = useTaskList(filter);
 
   if (isPending) {
@@ -50,18 +45,5 @@ export function TaskList({ filter, showProject = true, onCreate }: TaskListProps
     );
   }
 
-  return (
-    <div role="list" aria-label={t("nav.allTasks")}>
-      {data.map((task) => (
-        <div role="listitem" key={task.id}>
-          <TaskRow
-            task={task}
-            onOpen={open}
-            onStatusChange={(id, status) => setStatus.mutate({ id, status })}
-            showProject={showProject}
-          />
-        </div>
-      ))}
-    </div>
-  );
+  return <TaskRows tasks={data} label={t("nav.allTasks")} showProject={showProject} />;
 }

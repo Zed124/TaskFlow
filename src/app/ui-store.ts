@@ -7,6 +7,8 @@ interface UiState {
   openCreateTask: (defaults?: Partial<CreateTaskInput>) => void;
   closeCreateTask: () => void;
   searchOpen: boolean;
+  createProjectOpen: boolean;
+  setCreateProjectOpen: (open: boolean) => void;
   setSearchOpen: (open: boolean) => void;
 }
 
@@ -16,4 +18,6 @@ export const useUiStore = create<UiState>((set) => ({
   closeCreateTask: () => set((s) => ({ createTask: { ...s.createTask, open: false } })),
   searchOpen: false,
   setSearchOpen: (searchOpen) => set({ searchOpen }),
+  createProjectOpen: false,
+  setCreateProjectOpen: (createProjectOpen) => set({ createProjectOpen }),
 }));

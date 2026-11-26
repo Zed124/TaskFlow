@@ -49,7 +49,7 @@
     "primary": "Primary navigation"
   },
   "topbar": {
-    "search": "Search tasks, projects, notes",
+    "search": "Search or run a command",
     "newTask": "New task"
   },
   "boot": {
@@ -140,7 +140,8 @@
       "due": "Due date",
       "priority": "Priority",
       "title": "Title",
-      "manual": "Manual order"
+      "manual": "Manual order",
+      "completed": "Recently completed"
     },
     "subtasks": {
       "title": "Subtasks",
@@ -278,7 +279,7 @@
     "viewTasks": "View tasks"
   },
   "search": {
-    "placeholder": "Search tasks, projects, categories and notes",
+    "placeholder": "Type a command or search tasks, projects and notes",
     "empty": "No results for “{{query}}”",
     "hint": "Type to search. Matches titles, descriptions, notes and timeline notes.",
     "groups": {
@@ -308,7 +309,7 @@
     },
     "later": {
       "title": "More settings",
-      "body": "Notifications, tray and startup behavior, backups and dashboard layout are added with the features they control (Phases 4–7)."
+      "body": "Notifications, tray and startup behavior and backups are added with the features they control (Phases 6–7). Dashboard widgets are customized on the Dashboard itself."
     },
     "accents": {
       "violet": "Violet",
@@ -319,7 +320,17 @@
       "amber": "Amber",
       "rose": "Rose"
     },
-    "saveFailed": "Couldn't save the setting: {{message}}"
+    "saveFailed": "Couldn't save the setting: {{message}}",
+    "calendar": {
+      "title": "Calendar",
+      "weekStart": "Week starts on",
+      "weekStartHint": "Used by the calendar, week groupings and weekly statistics.",
+      "days": {
+        "0": "Sunday",
+        "1": "Monday",
+        "6": "Saturday"
+      }
+    }
   },
   "colors": {
     "slate": "Slate",
@@ -331,5 +342,137 @@
     "orange": "Orange",
     "rose": "Rose",
     "pink": "Pink"
+  },
+  "quickAdd": {
+    "placeholder": "Add a task — try “Call dentist tomorrow 9am !high #health @home”",
+    "label": "Quick add a task",
+    "add": "Add",
+    "hint": "Enter to add · dates: today, tomorrow, mon–sun, +3d · !high · @project · #category",
+    "remove": "Keep “{{raw}}” as text",
+    "unmatchedProject": "No project matches {{raw}}",
+    "unmatchedCategory": "No category matches {{raw}}",
+    "added": "Added “{{title}}”",
+    "kinds": {
+      "due": "Due",
+      "time": "Time",
+      "priority": "Priority",
+      "project": "Project",
+      "category": "Category"
+    }
+  },
+  "views": {
+    "today": {
+      "overdue": "Overdue",
+      "dueToday": "Due today",
+      "completedToday": "Completed today",
+      "emptyTitle": "Nothing due today",
+      "emptyBody": "Tasks due today and anything overdue gather here. Add one below, or give an existing task today's date."
+    },
+    "upcoming": {
+      "emptyTitle": "Nothing scheduled ahead",
+      "emptyBody": "Tasks with a future due date appear here, grouped by day.",
+      "later": "Later"
+    },
+    "overdue": {
+      "emptyTitle": "You're all caught up",
+      "emptyBody": "No open task is past its due date.",
+      "daysLate_one": "{{count}} day late",
+      "daysLate_other": "{{count}} days late"
+    },
+    "inProgress": {
+      "emptyTitle": "Nothing in progress",
+      "emptyBody": "Move a task to In progress when you start it. Its time in that status is measured automatically."
+    },
+    "completed": {
+      "emptyTitle": "No completed tasks yet",
+      "emptyBody": "Completed tasks are listed here by the day you finished them."
+    },
+    "count_one": "{{count}} task",
+    "count_other": "{{count}} tasks"
+  },
+  "board": {
+    "allProjects": "All projects",
+    "addTo": "Add to {{column}}",
+    "empty": "No tasks",
+    "moved": "Moved to {{status}}",
+    "dragHint": "Drag cards between columns to change their status. Space picks up a focused card; arrows move it.",
+    "showCompleted": "Show completed and cancelled"
+  },
+  "calendar": {
+    "today": "Today",
+    "previous": "Previous",
+    "next": "Next",
+    "month": "Month",
+    "week": "Week",
+    "more_one": "+{{count}} more",
+    "more_other": "+{{count}} more",
+    "addOn": "Add task on {{date}}",
+    "unscheduled": "No due date",
+    "unscheduledHint": "Open tasks without a due date. Open one and set a date to place it on the calendar.",
+    "unscheduledEmpty": "Every open task has a date."
+  },
+  "timeline": {
+    "range": "{{from}} – {{to}}",
+    "today": "Today",
+    "previous": "Earlier",
+    "next": "Later",
+    "empty": "No tasks are due, completed or in progress in this period.",
+    "legendSpan": "Bar: from creation (or start) to due date or completion",
+    "legendDue": "Due date",
+    "legendDone": "Completed",
+    "undated": "Tasks without a due date only appear here while in progress. See All tasks for the rest."
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "summary": "{{dueToday}} due today · {{overdue}} overdue · {{inProgress}} in progress",
+    "customize": "Customize",
+    "done": "Done",
+    "customizeHint": "Show, hide and reorder widgets. Drag a card or use the arrows.",
+    "hidden": "Hidden",
+    "show": "Show",
+    "hide": "Hide",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "viewAll": "View all",
+    "widgets": {
+      "stats": "Productivity",
+      "quickAdd": "Quick add",
+      "today": "Today",
+      "overdue": "Overdue",
+      "upcoming": "Upcoming deadlines",
+      "inProgress": "In progress",
+      "recentlyCompleted": "Recently completed"
+    },
+    "stats": {
+      "open": "Open tasks",
+      "dueToday": "Due today",
+      "overdue": "Overdue",
+      "completedToday": "Completed today",
+      "completedWeek": "Completed this week",
+      "chartLabel": "Tasks completed per day, last {{days}} days",
+      "chartNote": "Counts each task once per day it was completed."
+    },
+    "empty": {
+      "today": "Nothing due today.",
+      "overdue": "Nothing overdue.",
+      "upcoming": "No deadlines in the next 7 days.",
+      "inProgress": "Nothing in progress.",
+      "recentlyCompleted": "Nothing completed yet."
+    }
+  },
+  "commands": {
+    "group": "Commands",
+    "navigate": "Go to",
+    "projects": "Projects",
+    "newTask": "Create task",
+    "newProject": "Create project",
+    "toggleSidebar": "Toggle sidebar",
+    "toggleDensity": "Switch to {{density}} layout",
+    "goTo": "Go to {{page}}",
+    "openProject": "Open project {{name}}"
   }
 }
