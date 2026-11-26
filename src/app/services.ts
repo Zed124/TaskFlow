@@ -6,6 +6,8 @@ import { createSearchService } from "@/features/search/search-service";
 import { createStatsService } from "@/features/dashboard/stats-service";
 import { createSettingsService } from "@/features/settings/settings-service";
 import { createTaskService } from "@/features/tasks/task-service";
+import { createTimerService } from "@/features/time-tracking/timer-service";
+import { createAnalyticsService } from "@/features/analytics/analytics-service";
 import { systemClock, type Clock } from "@/lib/time";
 
 /**
@@ -21,6 +23,8 @@ export function createServices(db: SqlExecutor, clock: Clock = systemClock) {
     activity: createActivityService(db, clock),
     search: createSearchService(db),
     stats: createStatsService(db, clock),
+    timer: createTimerService(db, clock),
+    analytics: createAnalyticsService(db, clock),
   };
 }
 

@@ -122,7 +122,6 @@ export const navItems: readonly NavItem[] = [
     icon: BarChart3,
     labelKey: "nav.analytics",
     section: "insights",
-    planned: { phase: 5, scope: "analytics" },
   },
   {
     id: "activity",

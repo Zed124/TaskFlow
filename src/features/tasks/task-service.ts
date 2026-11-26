@@ -20,6 +20,7 @@ import { NotFoundError, ValidationError } from "@/lib/errors";
 import { newId } from "@/lib/ids";
 import { nowIso, toLocalDate, type Clock, type IsoInstant } from "@/lib/time";
 import { parseOrThrow } from "@/lib/validation";
+import { stopActiveForTasks } from "@/features/time-tracking/timer-core";
 import { addDays } from "date-fns";
 import { parseLocalDate } from "@/lib/format";
 
@@ -112,6 +113,10 @@ export function createTaskService(db: SqlExecutor, clock: Clock) {
       updatedAt: now,
     });
     await record(ctx, task.id, statusEventType(from, to), undo ? { from, to, undo } : { from, to });
+    // A finished task can't keep a work timer running.
+    if (to === "completed" || to === "cancelled") {
+      await stopActiveForTasks(r, [task.id], now, "task_closed", ctx.groupId);
+    }
   }
 
   async function setProject(ctx: Ctx, task: Task, projectId: string | null): Promise<void> {
@@ -378,7 +383,15 @@ export function createTaskService(db: SqlExecutor, clock: Clock) {
       return write(async (ctx) => {
         const { r, now } = ctx;
         const task = await requireTask(r, id);
-        for (const child of await r.tasks.listChildren(id)) {
+        const children = await r.tasks.listChildren(id);
+        await stopActiveForTasks(
+          r,
+          [id, ...children.map((c) => c.id)],
+          now,
+          "task_deleted",
+          ctx.groupId,
+        );
+        for (const child of children) {
           await r.tasks.update(child.id, { deletedAt: now, updatedAt: now });
           await record(ctx, child.id, "deleted", {});
         }

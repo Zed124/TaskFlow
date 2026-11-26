@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CheckCircle2, Hourglass, Timer } from "lucide-react";
+import { CheckCircle2, Hourglass } from "lucide-react";
+import { TrackedWork } from "@/features/time-tracking/components/tracked-work";
 import type { CompletionEvent } from "@/db/repositories/history-repository";
 import { summarizeStatusDurations } from "@/domain/durations";
 import { formatDuration, formatInstant } from "@/lib/format";
@@ -9,7 +10,7 @@ import { Section } from "./drawer-section";
 
 /**
  * Two clearly separate measurements: how long the task sat in In Progress (status duration,
- * live while ongoing) and manually tracked work, which arrives with the timer in Phase 5.
+ * live while ongoing) and manually tracked work from the timer. They are never combined.
  */
 export function TimeSection({ details }: { details: TaskDetails }) {
   const { t } = useTranslation();
@@ -46,13 +47,11 @@ export function TimeSection({ details }: { details: TaskDetails }) {
             )}
           </div>
         </div>
-        <div className="rounded-md border border-dashed border-line px-3 py-2">
-          <div className="flex items-center gap-1.5 text-xs text-fg-subtle">
-            <Timer className="size-3.5" strokeWidth={1.75} aria-hidden />
-            {t("tasks.time.tracked")}
-          </div>
-          <p className="mt-1 text-xs text-fg-subtle">{t("tasks.time.trackedLater")}</p>
-        </div>
+        <TrackedWork
+          taskId={details.task.id}
+          title={details.task.title}
+          status={details.task.status}
+        />
       </div>
     </Section>
   );

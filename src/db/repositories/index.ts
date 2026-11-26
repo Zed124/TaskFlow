@@ -5,6 +5,7 @@ import { createHistoryRepository } from "./history-repository";
 import { createProjectRepository } from "./project-repository";
 import { createSearchRepository } from "./search-repository";
 import { createTaskRepository } from "./task-repository";
+import { createWorkRepository } from "./work-repository";
 
 /**
  * All repositories bound to one executor. Services create a fresh set inside each
@@ -18,6 +19,7 @@ export function createRepositories(db: SqlExecutor) {
     projects: createProjectRepository(db),
     categories: createCategoryRepository(db),
     search: createSearchRepository(db),
+    work: createWorkRepository(db),
   };
 }
 

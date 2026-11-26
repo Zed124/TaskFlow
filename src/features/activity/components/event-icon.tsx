@@ -13,6 +13,7 @@ import {
   RotateCcw,
   Signal,
   Tag,
+  Timer,
   Trash2,
   XCircle,
   type LucideIcon,
@@ -37,6 +38,7 @@ const ICONS: Partial<Record<ActivityEvent["eventType"], LucideIcon>> = {
   deleted: Trash2,
   restored: RotateCcw,
   note: MessageSquareText,
+  work_session_logged: Timer,
 };
 
 /** The glyph for an activity event type (static icon components, chosen by lookup). */

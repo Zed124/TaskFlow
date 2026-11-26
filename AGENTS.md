@@ -43,8 +43,8 @@ src/
   components/ui/  design-system primitives (Radix + Tailwind), no business logic
   features/<name>/ components/, use-*.ts hooks, <name>-service.ts (+ .test.ts). Exists: settings,
                   tasks, projects, categories, activity, search (+ command palette), dashboard (stats),
-                  views (smart lists, board, calendar, timeline). To come: analytics, time-tracking,
-                  notifications, backup, undo, onboarding.
+                  views (smart lists, board, calendar, timeline), time-tracking (timer), analytics.
+                  To come: notifications, backup, undo, onboarding.
   domain/         pure types, Zod schemas, rules — no I/O (task, project, category, activity,
                   task-filter, smart-lists, quick-add, dashboard, durations, colors, settings)
   db/             executor.ts (SqlExecutor + Database), drivers/ (tauri, node-test), migrator.ts,
@@ -67,6 +67,9 @@ Adding a write use case: a service method that validates with Zod (`parseOrThrow
 activity via `record(...)`. Call it from the UI only through `useServiceMutation`, which refreshes
 queries and toasts errors. New activity event types need a payload schema in `domain/activity.ts`
 and a sentence in `features/activity/describe-event.ts`.
+Timer: all writes go through `timer` service; code that closes or deletes tasks must call
+`stopActiveForTasks` (timer-core) in the same transaction. Charts: colors from
+`features/analytics/components/chart-theme.ts` (validated palette; color follows the measure).
 Views: every list is a `TaskFilter` (see `domain/smart-lists.ts`); add a view by adding a filter,
 not a new query. Board moves go through `tasks.move` (status + position in one transaction).
 Task drawer: open any task with `useTaskDrawer().open(id)` (it sets `?task=<id>`).

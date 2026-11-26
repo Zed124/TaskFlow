@@ -3,6 +3,7 @@ import { Plus, Search } from "lucide-react";
 import { Kbd } from "@/components/ui/kbd";
 import { IconButton } from "@/components/ui/icon-button";
 import { useUiStore } from "../ui-store";
+import { TimerPill } from "@/features/time-tracking/components/timer-pill";
 
 export function TopBar({ title }: { title: string }) {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ export function TopBar({ title }: { title: string }) {
         {title}
       </h1>
 
+      <TimerPill />
       <button
         type="button"
         onClick={() => openSearch(true)}

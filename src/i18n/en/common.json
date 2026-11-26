@@ -171,7 +171,20 @@
       "ongoing": "still in progress",
       "never": "Never started",
       "tracked": "Tracked work",
-      "trackedLater": "The manual work timer (start, pause, resume, stop) arrives in Phase 5."
+      "start": "Start timer",
+      "pause": "Pause",
+      "resume": "Resume",
+      "stop": "Stop",
+      "running": "Timer running",
+      "paused": "Timer paused",
+      "sessions": "Work sessions",
+      "noSessions": "No work tracked yet. Start the timer when you begin working.",
+      "sessionLine": "{{start}} · {{duration}}",
+      "segments_one": "{{count}} stretch",
+      "segments_other": "{{count}} stretches",
+      "trackedHint": "Time you actively tracked with the timer. Pauses are excluded.",
+      "closedHint": "Reopen the task to track more time.",
+      "otherTask": "Timer is running on “{{title}}”. Starting here stops that one."
     },
     "actions": {
       "delete": "Delete task",
@@ -222,7 +235,11 @@
       "deleted": "deleted this",
       "restored": "restored this",
       "unknown": "recorded an event ({{type}})",
-      "undo": "(undo)"
+      "undo": "(undo)",
+      "work_session_logged_manual": "tracked {{duration}} of work",
+      "work_session_logged_switched": "tracked {{duration}} of work (timer moved to another task)",
+      "work_session_logged_task_closed": "tracked {{duration}} of work (timer stopped when the task was closed)",
+      "work_session_logged_task_deleted": "tracked {{duration}} of work (timer stopped when the task was deleted)"
     },
     "fields": {
       "title": "title",
@@ -474,5 +491,71 @@
     "toggleDensity": "Switch to {{density}} layout",
     "goTo": "Go to {{page}}",
     "openProject": "Open project {{name}}"
+  },
+  "timer": {
+    "pillRunning": "Tracking “{{title}}”",
+    "pillPaused": "Paused: “{{title}}”",
+    "open": "Open task",
+    "stopped": "Logged {{duration}} on “{{title}}”"
+  },
+  "analytics": {
+    "range": {
+      "7d": "7 days",
+      "30d": "30 days",
+      "90d": "90 days",
+      "12m": "12 months",
+      "label": "Period"
+    },
+    "granularity": {
+      "day": "Daily",
+      "week": "Weekly",
+      "month": "Monthly",
+      "label": "Group by"
+    },
+    "kpi": {
+      "completed": "Tasks completed",
+      "created": "Tasks created",
+      "lead": "Median lead time",
+      "leadHint": "Creation to first completion, for {{count}} task(s) first completed in this period.",
+      "inProgress": "Median time in progress",
+      "inProgressHint": "Status duration: how long completed tasks sat in In progress ({{count}} task(s) that were ever started). It is not time spent working.",
+      "tracked": "Tracked work",
+      "trackedHint": "Time recorded with the work timer in this period. Pauses are excluded.",
+      "noData": "No data",
+      "sample": "n = {{count}}"
+    },
+    "charts": {
+      "trend": "Completed and created",
+      "trendNote": "Each task counts once per period, however many times it was completed.",
+      "tracked": "Tracked work",
+      "trackedNote": "From the manual timer only. Status duration is reported separately above.",
+      "priority": "Priority mix",
+      "priorityNote": "Open tasks now, and tasks completed in this period.",
+      "projects": "Projects",
+      "showTable": "Show as table",
+      "period": "Period"
+    },
+    "series": {
+      "completed": "Completed",
+      "created": "Created",
+      "tracked": "Tracked work",
+      "open": "Open"
+    },
+    "measures": {
+      "title": "Two different measures of time",
+      "status": "Time in progress is measured automatically from status changes. A task left In progress overnight accumulates time even though nobody worked on it.",
+      "tracked": "Tracked work only counts time you recorded with the timer. Use it when you want to know actual effort."
+    },
+    "projects": {
+      "name": "Project",
+      "open": "Open",
+      "completed": "Completed",
+      "tracked": "Tracked",
+      "lead": "Median lead time",
+      "none": "No project",
+      "empty": "No project activity in this period."
+    },
+    "hours": "{{value}} h",
+    "minutes": "{{value}} min"
   }
 }

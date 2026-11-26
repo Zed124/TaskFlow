@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import type { ActivityEvent } from "@/domain/activity";
-import { formatLocalDate } from "@/lib/format";
+import { formatDuration, formatLocalDate } from "@/lib/format";
 
 /** Turns an activity event into a short sentence ("changed priority from Low to High"). */
 export function useDescribeEvent(): (event: ActivityEvent) => string {
@@ -84,6 +84,10 @@ export function useDescribeEvent(): (event: ActivityEvent) => string {
           return t(`activity.events.${event.eventType}`);
         case "note":
           return event.body ?? "";
+        case "work_session_logged":
+          return t(`activity.events.work_session_logged_${event.payload.reason}`, {
+            duration: formatDuration(event.payload.durationMs),
+          });
         case "unknown":
           return t("activity.events.unknown", { type: event.rawType });
       }

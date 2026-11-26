@@ -222,7 +222,7 @@ CREATE VIRTUAL TABLE search_index USING fts5(
 
 ## 5. Event types (initial set)
 
-`created`, `field_changed` (payload `{field, from, to}`, one per field, grouped by `group_id`), `status_changed`, `priority_changed`, `completed`, `reopened`, `cancelled`, `project_changed`, `category_changed`, `due_changed`, `subtask_added`, `subtask_removed`, `archived`, `unarchived`, `deleted`, `restored`, `work_session_logged`, `note` (user).
+`created`, `field_changed` (payload `{field, from, to}`, one per field, grouped by `group_id`), `status_changed`, `priority_changed`, `completed`, `reopened`, `cancelled`, `project_changed`, `category_changed`, `due_changed`, `subtask_added`, `subtask_removed`, `archived`, `unarchived`, `deleted`, `restored`, `work_session_logged` (payload `{sessionId, durationMs, reason: manual|switched|task_closed|task_deleted}`), `note` (user).
 
 Payloads are typed in `src/domain/activity.ts` with a Zod discriminated union, and every payload is validated before it is written.
 

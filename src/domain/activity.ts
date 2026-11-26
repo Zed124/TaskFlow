@@ -40,6 +40,11 @@ export const activityPayloadSchemas = {
   deleted: nothing,
   restored: nothing,
   note: nothing,
+  work_session_logged: z.object({
+    sessionId: z.string(),
+    durationMs: z.number().int().nonnegative(),
+    reason: z.enum(["manual", "switched", "task_closed", "task_deleted"]),
+  }),
 } as const;
 
 export type ActivityEventType = keyof typeof activityPayloadSchemas;

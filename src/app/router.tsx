@@ -20,6 +20,7 @@ import {
 import { BoardPage } from "@/features/views/board-page";
 import { CalendarPage } from "@/features/views/calendar-page";
 import { TimelinePage } from "@/features/views/timeline-page";
+import { AnalyticsPage } from "@/features/analytics/analytics-page";
 
 /** Pages that exist. Anything else in the sidebar renders its honest "planned" placeholder. */
 const PAGES: Partial<Record<string, ReactNode>> = {
@@ -36,6 +37,7 @@ const PAGES: Partial<Record<string, ReactNode>> = {
   projects: <ProjectsPage />,
   categories: <CategoriesPage />,
   activity: <ActivityPage />,
+  analytics: <AnalyticsPage />,
   settings: <SettingsPage />,
 };
 

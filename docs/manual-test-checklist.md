@@ -60,6 +60,19 @@ Last run: 2026-11-26 by Claude in `tauri dev`. T1–T8 passed, and the DB was in
 
 Last run: 2026-11-26 by Claude in `tauri dev`, driven through `scripts/drive-webview.mjs` (no OS input). V1, V2, V3, V4, V5 (month view), V7, V8 and V9 passed, and the board moves were confirmed in the DB history. V6 and V10 were checked only by the automated tests (stats week start, day-keyed filters). Neither was walked through by hand.
 
+## Time tracking & analytics (Phase 5)
+
+| #   | Step                                                  | Expected                                                                                                                                                       |
+| --- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1  | Drawer → Start timer, wait, Pause, wait, Resume, Stop | The live clock counts only while running. A toast shows the logged time. Work sessions lists one session with 2 stretches. Activity shows "tracked … of work". |
+| A2  | Start a timer on task A, then start one on task B     | A's session stops (history: "timer moved to another task"). The top-bar pill shows B.                                                                          |
+| A3  | With a timer running, complete or delete the task     | The timer stops and the session is logged.                                                                                                                     |
+| A4  | With a timer running, quit and restart the app        | The pill is still running, and the elapsed time includes the time the app was closed.                                                                          |
+| A5  | Analytics: switch periods and grouping                | KPIs, trend and tracked-work charts update. Empty periods show as zero, and "Show as table" lists the values.                                                  |
+| A6  | Compare "Median time in progress" with "Tracked work" | They are separate cards with different explanations, never summed.                                                                                             |
+
+Last run: 2026-11-26 by Claude via `scripts/drive-webview.mjs`. A1 passed (DB: 1 session, 2 segments, 20.7 s, plus the history event). A5 passed for 30 days, daily. A2–A4 were checked only by the automated timer tests, not by hand.
+
 ## Windows integration (Phase 6)
 
 Covers tray, close-to-tray, single instance, autostart, and notifications. To be written with the feature.

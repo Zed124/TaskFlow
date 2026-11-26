@@ -57,7 +57,16 @@ open project, toggle sidebar/density) merged with full-text search.
 
 List view (sort, filter, density), smart lists (Today, Upcoming, Overdue, In Progress, Completed), Kanban (dnd-kit, persisted status + order, activity event), Calendar (month/week, unscheduled tray), Timeline (chronological by due date and history, undated section), Quick Add (inline + dialog), Command palette (`Ctrl+K`), and the Dashboard with configurable and reorderable widgets.
 
-## Phase 5 — Time tracking & analytics
+## Phase 5 — Time tracking & analytics ✅
+
+Delivered: manual work timer (start / pause / resume / stop as sessions made of segments, one
+active timer at a time, survives restarts, auto-stops when its task is completed, cancelled or
+deleted, logs `work_session_logged`); timer controls and session list in the task drawer next to
+the separate status-duration readout; live timer pill in the top bar; Analytics page (7 d / 30 d /
+90 d / 12 m, daily / weekly / monthly): completed vs created trend, tracked-work trend, priority
+mix, project table, KPIs with medians and sample sizes; status duration and tracked work are
+reported separately and explained on the page. Charts use a validated categorical palette, a
+legend, tooltips and a table view.
 
 Status-duration reporting from intervals. Timer service (start/pause/resume/stop, survives restarts). Timer UI in the drawer, top bar, and tray. Analytics page (Recharts): daily/weekly/monthly completions, average lead time, priority and project distribution, trends, and status duration vs. tracked time shown separately.
 
