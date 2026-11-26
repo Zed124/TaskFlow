@@ -73,6 +73,26 @@ Last run: 2026-11-26 by Claude in `tauri dev`, driven through `scripts/drive-web
 
 Last run: 2026-11-26 by Claude via `scripts/drive-webview.mjs`. A1 passed (DB: 1 session, 2 segments, 20.7 s, plus the history event). A5 passed for 30 days, daily. A2–A4 were checked only by the automated timer tests, not by hand.
 
+## Backups, undo, archiving, onboarding (Phase 7)
+
+| #   | Step                                                                             | Expected                                                                                                                                            |
+| --- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| B1  | Settings → Back up now                                                           | A file `taskflow-backup-auto-…json` appears in the backup folder, and "Last automatic backup" shows the time and size.                              |
+| B2  | Settings → Export backup… → save anywhere                                        | The file is saved, and the toast shows its size.                                                                                                    |
+| B3  | Settings → Restore from backup… → pick a non-backup .json                        | "This backup can't be restored", with the reason. Nothing changes.                                                                                  |
+| B4  | Restore from backup… → pick a real backup → review the preview → Replace my data | A `taskflow-backup-pre-restore-…json` is saved first, then the data matches the backup. Search, history and timers all work.                        |
+| B5  | Change the backup folder, then Back up now                                       | The file goes to the new folder. "Use default" switches back.                                                                                       |
+| B6  | Keep = 3, then Back up now five times                                            | Only the 3 newest `auto` files remain. Manual and pre-restore files stay.                                                                           |
+| B7  | Export tasks to CSV…, then open it in Excel                                      | Accented and Arabic text displays correctly. A title like `=1+1` shows as text, not a formula.                                                      |
+| U1  | Complete a task from a list → Undo in the toast                                  | The task is reopened. History shows "reopened … (undo)".                                                                                            |
+| U2  | Delete a task → Undo                                                             | It's back with its subtasks.                                                                                                                        |
+| U3  | Drag a board card to another column → Undo                                       | The card returns to its column and position.                                                                                                        |
+| U4  | Edit a title in the drawer, click away, then press Ctrl+Z outside a text field   | The old title returns. Ctrl+Z inside a text field still does normal text undo.                                                                      |
+| R1  | Completed → Archive completed… → All → Undo                                      | The tasks disappear from lists, then return.                                                                                                        |
+| O1  | Fresh profile (delete `%APPDATA%\com.taskflow.app`) → launch                     | The welcome dialog appears, with example tasks on by default. "Get started" creates the "Getting started" project. The dialog doesn't appear again. |
+
+Last run: 2026-11-26 by Claude via `scripts/drive-webview.mjs`. B1 passed (file validated: all 9 tables). U1 passed, via both the toast and Ctrl+Z, with history showing `undo: true`. R1 passed. O1 was checked on the existing profile, where example tasks correctly default to off. B2–B7 involve the native file pickers and were left for hand testing. The restore logic (B4) is covered by the automated tests (round trip, replace, rollback on failure, rejected inputs).
+
 ## Windows integration (Phase 6)
 
 Run these on the installed release build when you can: notifications are attributed to PowerShell in `tauri dev` and to TaskFlow only when installed.

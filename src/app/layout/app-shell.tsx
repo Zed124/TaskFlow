@@ -12,7 +12,10 @@ import { useNavigate } from "react-router";
 import { findNavItem } from "../navigation";
 import { useDesktopIntegration } from "@/features/system/use-desktop-integration";
 import { useNotificationScheduler } from "@/features/notifications/use-notification-scheduler";
+import { useBackupScheduler } from "@/features/backup/use-backup-scheduler";
+import { OnboardingDialog } from "@/features/onboarding/onboarding-dialog";
 import { useUiStore } from "../ui-store";
+import { useUndo } from "../use-undo";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 
@@ -32,9 +35,11 @@ export function AppShell() {
   const createProjectOpen = useUiStore((s) => s.createProjectOpen);
   const setCreateProjectOpen = useUiStore((s) => s.setCreateProjectOpen);
   const navigate = useNavigate();
+  const { undoLast } = useUndo();
   useAppearanceSync();
   useDesktopIntegration();
   useNotificationScheduler();
+  useBackupScheduler();
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -47,6 +52,10 @@ export function AppShell() {
       } else if (key === "n") {
         event.preventDefault();
         openCreate();
+      } else if (key === "z" && !isEditableTarget(event.target)) {
+        // In text fields Ctrl+Z stays the browser's text undo.
+        event.preventDefault();
+        void undoLast();
       } else if (key === "b" && !isEditableTarget(event.target)) {
         event.preventDefault();
         setCollapsed(!collapsed);
@@ -54,7 +63,7 @@ export function AppShell() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [collapsed, setCollapsed, setSearchOpen, openCreate]);
+  }, [collapsed, setCollapsed, setSearchOpen, openCreate, undoLast]);
 
   const item = findNavItem(pathname);
   const title = item ? t(item.labelKey) : t("app.name");
@@ -77,6 +86,7 @@ export function AppShell() {
           onSaved={(p) => void navigate(`/projects/${p.id}`)}
         />
       )}
+      <OnboardingDialog />
       <Toaster />
     </div>
   );

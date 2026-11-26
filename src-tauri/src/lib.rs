@@ -1,6 +1,7 @@
 mod commands;
 mod db;
 mod desktop;
+mod files;
 
 use tauri::Manager;
 use tauri_plugin_autostart::MacosLauncher;
@@ -24,6 +25,7 @@ pub fn run() {
             Some(vec![desktop::MINIMIZED_ARG]),
         ))
         .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_dialog::init())
         .manage(desktop::DesktopState::default())
         .setup(|app| {
             // %APPDATA%\com.taskflow.app\taskflow.db
@@ -52,6 +54,11 @@ pub fn run() {
             desktop::set_tray_timer,
             desktop::app_exit,
             desktop::app_request_quit,
+            files::write_export_file,
+            files::read_backup_file,
+            files::list_backup_files,
+            files::delete_backup_file,
+            files::default_backup_dir,
         ])
         .run(tauri::generate_context!())
         .expect("error while running TaskFlow");

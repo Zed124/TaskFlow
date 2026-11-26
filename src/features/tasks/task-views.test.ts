@@ -154,3 +154,38 @@ describe("dashboard stats", () => {
     expect(stats.completedThisWeek).toBe(2);
   });
 });
+
+describe("bulk archiving", () => {
+  it("archives completed tasks (optionally only older ones) and can undo it in one step", async () => {
+    const old = await services.tasks.create({ title: "Old done" });
+    await services.tasks.setStatus(old.id, "completed");
+    clock.advance(10 * DAY);
+    const recent = await services.tasks.create({ title: "Recent done" });
+    await services.tasks.setStatus(recent.id, "completed");
+    await services.tasks.create({ title: "Still open" });
+
+    const cutoff = new Date(clock.now().getTime() - 7 * DAY).toISOString() as never;
+    const archived = await services.tasks.archiveCompleted({ completedBefore: cutoff });
+    expect(archived).toEqual([old.id]);
+    expect(titles(await services.tasks.list({ statuses: ["completed"] }))).toEqual(["Recent done"]);
+
+    const all = await services.tasks.archiveCompleted();
+    expect(all).toEqual([recent.id]);
+    await services.tasks.unarchiveMany([...archived, ...all]);
+    expect(
+      titles(
+        await services.tasks.list({
+          statuses: ["completed"],
+          sort: { field: "title", direction: "asc" },
+        }),
+      ),
+    ).toEqual(["Old done", "Recent done"]);
+    // History keeps the whole story.
+    expect((await services.activity.listForTask(old.id)).map((e) => e.eventType)).toEqual([
+      "created",
+      "completed",
+      "archived",
+      "unarchived",
+    ]);
+  });
+});

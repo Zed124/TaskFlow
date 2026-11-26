@@ -43,8 +43,9 @@ src/
   components/ui/  design-system primitives (Radix + Tailwind), no business logic
   features/<name>/ components/, use-*.ts hooks, <name>-service.ts (+ .test.ts). Exists: settings,
                   tasks, projects, categories, activity, search (+ command palette), dashboard (stats),
-                  views (smart lists, board, calendar, timeline), time-tracking (timer), analytics.
-                  To come: notifications, backup, undo, onboarding.
+                  views (smart lists, board, calendar, timeline), time-tracking (timer), analytics,
+                  notifications, system (desktop hooks), backup (export/restore/CSV/scheduler),
+                  onboarding.
   domain/         pure types, Zod schemas, rules — no I/O (task, project, category, activity,
                   task-filter, smart-lists, quick-add, dashboard, durations, colors, settings)
   db/             executor.ts (SqlExecutor + Database), drivers/ (tauri, node-test), migrator.ts,
@@ -70,6 +71,11 @@ Adding a write use case: a service method that validates with Zod (`parseOrThrow
 activity via `record(...)`. Call it from the UI only through `useServiceMutation`, which refreshes
 queries and toasts errors. New activity event types need a payload schema in `domain/activity.ts`
 and a sentence in `features/activity/describe-event.ts`.
+Undo: user-facing writes push a compensating action via `useUndo().record` (see
+`features/tasks/use-task-actions.ts`); never undo by deleting history. Backups: a new table with user
+data must be added to `domain/backup.ts` (`backupTables`, parent-first order) and to the round-trip
+test; bump `BACKUP_FORMAT_VERSION` only for incompatible changes. All backup writes go through
+`backup-runner.ts` (single lock).
 Desktop: native events are handled in `features/system/use-desktop-integration.ts`; quitting must
 go through the flush (Rust emits `app://quit-requested`, the frontend blurs editors, waits for
 mutations, then calls `app_exit`). Notifications: rules live in `domain/notifications.ts`

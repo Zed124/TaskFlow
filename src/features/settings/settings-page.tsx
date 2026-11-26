@@ -8,6 +8,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { useSetting } from "./use-settings";
 import { Row, Section } from "./settings-rows";
 import { DesktopSettings } from "./desktop-settings";
+import { BackupSettings } from "@/features/backup/components/backup-settings";
 
 // Swatches show the actual accent value; kept in sync with src/styles/index.css.
 const SWATCH: Record<Accent, string> = {
@@ -106,6 +107,8 @@ export function SettingsPage() {
       </Section>
 
       <DesktopSettings />
+
+      <BackupSettings />
 
       <Section title={t("settings.later.title")}>
         <p className="py-3 text-sm text-fg-muted">{t("settings.later.body")}</p>

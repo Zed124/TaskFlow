@@ -368,6 +368,35 @@ export function createTaskService(db: SqlExecutor, clock: Clock) {
       });
     },
 
+    /**
+     * Archives completed top-level tasks (optionally only those completed before a moment).
+     * Returns the ids so the caller can offer undo. History and completions are untouched.
+     */
+    async archiveCompleted(options: { completedBefore?: IsoInstant } = {}): Promise<string[]> {
+      return await write(async (ctx) => {
+        const done = await ctx.r.tasks.list({
+          statuses: ["completed"],
+          ...(options.completedBefore ? { completed: { to: options.completedBefore } } : {}),
+        });
+        for (const task of done) {
+          await ctx.r.tasks.update(task.id, { archivedAt: ctx.now, updatedAt: ctx.now });
+          await record(ctx, task.id, "archived", {});
+        }
+        return done.map((t) => t.id);
+      });
+    },
+
+    async unarchiveMany(ids: readonly string[]): Promise<void> {
+      await write(async (ctx) => {
+        for (const id of ids) {
+          const task = await ctx.r.tasks.get(id);
+          if (!task?.archivedAt) continue;
+          await ctx.r.tasks.update(id, { archivedAt: null, updatedAt: ctx.now });
+          await record(ctx, id, "unarchived", {});
+        }
+      });
+    },
+
     unarchive(id: string): Promise<Task> {
       return write(async (ctx) => {
         const task = await requireTask(ctx.r, id);

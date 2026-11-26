@@ -84,7 +84,20 @@ Controls v6).
 
 Close-to-tray, tray menu, single instance, quit flow with flush, autostart (`--minimized`), notifications (due soon, overdue, reminder) with per-type settings and dedupe, and a window-state restore. Manual test checklist.
 
-## Phase 7 — Backups & customization
+## Phase 7 — Backups & customization ✅
+
+Delivered: lossless JSON backups (all user tables, versioned format) with validation (structure,
+versions, duplicate ids, every cross-table reference) and a preview before restoring; restore is
+one transaction (foreign keys deferred) preceded by a mandatory safety backup; automatic backups
+(6 h / 12 h / daily / weekly, folder of choice, default `Documents\TaskFlow Backups`, keep last N
+automatic files, manual exports never deleted) with a run log; manual export; CSV export (UTF-8
+BOM, RFC 4180, formula-injection guard). Narrow Rust file commands (json/csv only; list/delete
+only `taskflow-backup-*.json`) instead of the general fs plugin. Undo: session stack of
+compensating actions (Ctrl+Z outside text fields, Undo button on toasts for completion,
+cancellation, delete, archive, board moves, bulk archive, project archive); undo writes history
+(`undo: true`) instead of erasing it. Bulk "Archive completed…" (all / older than 7 / 30 days).
+First-launch welcome with optional example project. (Accent, density, sidebar, week start,
+dashboard, notifications, tray and startup settings shipped in earlier phases.)
 
 JSON export, validated restore with preview and safety backup, scheduled auto-backup with retention, CSV export, the undo stack (`Ctrl+Z` + toasts), archiving completed tasks and projects, the full Settings page (accent, density, sidebar, dashboard, notifications, tray, startup, backup), and first-launch onboarding.
 

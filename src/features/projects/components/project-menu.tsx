@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Archive, ArchiveRestore, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useServiceMutation } from "@/app/data";
 import { toast } from "@/app/toast-store";
+import { useUndo } from "@/app/use-undo";
+import { useServices } from "@/app/use-services";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   DropdownMenu,
@@ -25,7 +27,17 @@ export function ProjectMenu({
   const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
-  const archive = useServiceMutation((s, id: string) => s.projects.archive(id));
+  const services = useServices();
+  const { record, notify } = useUndo();
+  const archive = useServiceMutation((s, id: string) => s.projects.archive(id), {
+    onSuccess: (p) =>
+      notify(
+        t("undo.toasts.projectArchived", { name: p.name }),
+        record(t("undo.labels.projectArchive", { name: p.name }), () =>
+          services.projects.unarchive(p.id),
+        ),
+      ),
+  });
   const unarchive = useServiceMutation((s, id: string) => s.projects.unarchive(id));
   const remove = useServiceMutation((s, id: string) => s.projects.delete(id), {
     onSuccess: () => {

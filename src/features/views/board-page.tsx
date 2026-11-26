@@ -25,6 +25,8 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useServiceMutation } from "@/app/data";
+import { useUndo } from "@/app/use-undo";
+import { useServices } from "@/app/use-services";
 import { useUiStore } from "@/app/ui-store";
 import { ColorDot } from "@/components/ui/color-dot";
 import { IconButton } from "@/components/ui/icon-button";
@@ -95,9 +97,31 @@ export function BoardPage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const columns = override ?? serverColumns;
 
+  const services = useServices();
+  const { record, notify } = useUndo();
   const move = useServiceMutation(
-    (s, v: { id: string; status: TaskStatus; orderedIds: string[] }) =>
-      s.tasks.move(v.id, { status: v.status, orderedIds: v.orderedIds }),
+    (
+      s,
+      v: {
+        id: string;
+        status: TaskStatus;
+        orderedIds: string[];
+        before: { title: string; status: TaskStatus; orderedIds: string[] };
+      },
+    ) => s.tasks.move(v.id, { status: v.status, orderedIds: v.orderedIds }),
+    {
+      onSuccess: (_task, v) => {
+        const entry = record(t("undo.labels.move", { title: v.before.title }), () =>
+          services.tasks.move(v.id, { status: v.before.status, orderedIds: v.before.orderedIds }),
+        );
+        if (v.before.status !== v.status) {
+          notify(
+            t("undo.toasts.moved", { title: v.before.title, status: t(`status.${v.status}`) }),
+            entry,
+          );
+        }
+      },
+    },
   );
 
   const sensors = useSensors(
@@ -153,7 +177,15 @@ export function BoardPage() {
       setOverride(null);
       return;
     }
-    move.mutate({ id, status: to, orderedIds: ordered }, { onSettled: () => setOverride(null) });
+    move.mutate(
+      {
+        id,
+        status: to,
+        orderedIds: ordered,
+        before: { title: task.title, status: task.status, orderedIds: serverColumns[task.status] },
+      },
+      { onSettled: () => setOverride(null) },
+    );
   };
 
   const active = activeId ? byId.get(activeId) : undefined;

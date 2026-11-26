@@ -326,7 +326,7 @@
     },
     "later": {
       "title": "More settings",
-      "body": "Backups and data export are added in Phase 7. Dashboard widgets are customized on the Dashboard itself."
+      "body": "Dashboard widgets are customized on the Dashboard itself."
     },
     "accents": {
       "violet": "Violet",
@@ -587,5 +587,112 @@
     },
     "hours": "{{value}} h",
     "minutes": "{{value}} min"
+  },
+  "undo": {
+    "action": "Undo",
+    "nothing": "Nothing to undo",
+    "done": "Undone: {{label}}",
+    "failed": "Couldn't undo: {{message}}",
+    "labels": {
+      "create": "create “{{title}}”",
+      "edit": "edit “{{title}}”",
+      "status": "status change on “{{title}}”",
+      "archive": "archive “{{title}}”",
+      "unarchive": "restore “{{title}}” from the archive",
+      "delete": "delete “{{title}}”",
+      "move": "move “{{title}}”",
+      "archiveMany_one": "archive {{count}} task",
+      "archiveMany_other": "archive {{count}} tasks",
+      "projectArchive": "archive project “{{name}}”"
+    },
+    "toasts": {
+      "completed": "Completed “{{title}}”",
+      "cancelled": "Cancelled “{{title}}”",
+      "moved": "Moved “{{title}}” to {{status}}",
+      "archivedMany_one": "Archived {{count}} completed task",
+      "archivedMany_other": "Archived {{count}} completed tasks",
+      "projectArchived": "Archived project “{{name}}”"
+    }
+  },
+  "archive": {
+    "completedButton": "Archive completed…",
+    "title": "Archive completed tasks",
+    "body": "Archived tasks leave your lists but keep their history, completions and tracked time. Turn on “Show archived” in All tasks to see them again.",
+    "scope": "Which tasks",
+    "all": "All completed tasks",
+    "older7": "Completed more than 7 days ago",
+    "older30": "Completed more than 30 days ago",
+    "confirm": "Archive",
+    "none": "No completed tasks match."
+  },
+  "backup": {
+    "title": "Backups and data",
+    "auto": "Automatic backups",
+    "autoHint": "A complete backup file is saved to the folder below on a schedule, while TaskFlow is running.",
+    "interval": "How often",
+    "intervals": {
+      "6": "Every 6 hours",
+      "12": "Every 12 hours",
+      "24": "Daily",
+      "168": "Weekly"
+    },
+    "folder": "Backup folder",
+    "folderDefault": "Default: {{path}}",
+    "change": "Change…",
+    "useDefault": "Use default",
+    "retention": "Keep",
+    "retentionValue_one": "Last {{count}} backup",
+    "retentionValue_other": "Last {{count}} backups",
+    "retentionHint": "Older automatic backups are deleted. Manual exports are never deleted.",
+    "lastRun": "Last automatic backup",
+    "never": "Not yet",
+    "lastOk": "{{when}} · {{size}}",
+    "lastFailed": "Failed {{when}}: {{error}}",
+    "now": "Back up now",
+    "nowDone": "Backup saved: {{name}}",
+    "export": "Export backup…",
+    "exportHint": "Save a complete backup (.json) anywhere, for example to move TaskFlow to another PC.",
+    "exported": "Exported backup ({{size}})",
+    "restore": "Restore from backup…",
+    "restoreHint": "Replaces all current data with a backup file. A safety backup is saved first.",
+    "csv": "Export tasks to CSV…",
+    "csvHint": "A spreadsheet-friendly list of tasks. It isn't a backup: history is not included.",
+    "csvDone_one": "Exported {{count}} task to CSV",
+    "csvDone_other": "Exported {{count}} tasks to CSV",
+    "failed": "Backup failed: {{message}}",
+    "readFailed": "Couldn't read that file: {{message}}",
+    "invalidTitle": "This backup can't be restored",
+    "invalidBody": "Nothing was changed. Problems found:",
+    "previewTitle": "Restore this backup?",
+    "previewBody": "All tasks, projects, categories, history, time records and settings in TaskFlow will be replaced by the backup's contents. Before that, your current data is saved to a safety backup in your backup folder.",
+    "made": "Backup made",
+    "contents": "Contains",
+    "contentsValue": "{{tasks}} tasks ({{subtasks}} subtasks, {{deleted}} deleted), {{projects}} projects, {{categories}} categories, {{events}} history entries, {{sessions}} work sessions",
+    "confirm": "Replace my data",
+    "restoring": "Restoring…",
+    "safetyFailed": "Restore cancelled: the safety backup couldn't be saved ({{message}}). Nothing was changed.",
+    "restored": "Backup restored. A safety copy of the previous data was saved as {{name}}."
+  },
+  "onboarding": {
+    "title": "Welcome to TaskFlow",
+    "intro": "A calm, local-first place for your tasks. Everything stays on this PC, works offline, and keeps a full history of what you've done.",
+    "step1Title": "Capture quickly",
+    "step1": "Press Ctrl+N for a new task, or type into Quick Add: “Call dentist tomorrow 9am !high #health”.",
+    "step2Title": "Find anything",
+    "step2": "Ctrl+K searches tasks, projects and notes, and runs commands like “Go to Board”.",
+    "step3Title": "Plan and reflect",
+    "step3": "Use My Day, the Board and the Calendar to plan. Start the timer on a task to track real work, and see trends in Analytics.",
+    "step4Title": "Safe by default",
+    "step4": "Changes can be undone with Ctrl+Z, and TaskFlow backs itself up daily to Documents\\TaskFlow Backups.",
+    "samples": "Add a few example tasks to explore",
+    "samplesHint": "Creates a small “Getting started” project you can delete any time.",
+    "start": "Get started",
+    "sampleProject": "Getting started",
+    "sampleTasks": {
+      "t1": "Try Quick Add: type “Review notes tomorrow !high”",
+      "t2": "Open this task and add a subtask",
+      "t3": "Drag this card on the Board to In progress",
+      "t4": "Start the timer on a task, then stop it"
+    }
   }
 }

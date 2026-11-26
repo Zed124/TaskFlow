@@ -9,6 +9,9 @@ import { createTaskService } from "@/features/tasks/task-service";
 import { createTimerService } from "@/features/time-tracking/timer-service";
 import { createAnalyticsService } from "@/features/analytics/analytics-service";
 import { createNotificationService } from "@/features/notifications/notification-service";
+import { createBackupService } from "@/features/backup/backup-service";
+import { exportTasksCsv } from "@/features/backup/csv-export";
+import { migrations } from "@/db/migrations";
 import { systemClock, type Clock } from "@/lib/time";
 
 /**
@@ -27,6 +30,13 @@ export function createServices(db: SqlExecutor, clock: Clock = systemClock) {
     timer: createTimerService(db, clock),
     analytics: createAnalyticsService(db, clock),
     notifications: createNotificationService(db, clock),
+    backup: {
+      ...createBackupService(db, clock, {
+        schemaVersion: migrations.at(-1)?.version ?? 0,
+        appVersion: __APP_VERSION__,
+      }),
+      exportTasksCsv: () => exportTasksCsv(db),
+    },
   };
 }
 

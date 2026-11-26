@@ -1,6 +1,7 @@
-import { useMemo, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  Archive,
   CalendarClock,
   CheckCircle2,
   CircleDot,
@@ -18,6 +19,8 @@ import { toLocalDate } from "@/lib/time";
 import { QuickAdd } from "@/features/tasks/components/quick-add";
 import { useTaskList } from "@/features/tasks/use-task-list";
 import { TaskSection } from "./components/task-section";
+import { ArchiveCompletedDialog } from "./components/archive-completed-dialog";
+import { Button } from "@/components/ui/button";
 import { groupBy } from "@/lib/group-by";
 import { useNow, useTodayKey } from "./use-now";
 
@@ -181,12 +184,21 @@ export function InProgressPage() {
 export function CompletedPage() {
   const { t } = useTranslation();
   const f = useSmartFilters();
+  const [archiving, setArchiving] = useState(false);
   const { data, isPending } = useTaskList(f.completed);
   const groups = groupBy<TaskListItem>(data ?? [], (task) =>
     task.completedAt ? toLocalDate(parseISO(task.completedAt)) : "",
   );
   return (
     <PageFrame>
+      {groups.length > 0 && (
+        <div className="flex justify-end px-(--tf-page-x) pt-3 pb-1">
+          <Button size="sm" variant="secondary" onClick={() => setArchiving(true)}>
+            <Archive className="size-3.5" aria-hidden />
+            {t("archive.completedButton")}
+          </Button>
+        </div>
+      )}
       {isPending ? (
         <Loading />
       ) : groups.length === 0 ? (
@@ -204,6 +216,7 @@ export function CompletedPage() {
           />
         ))
       )}
+      {archiving && <ArchiveCompletedDialog onClose={() => setArchiving(false)} />}
     </PageFrame>
   );
 }
