@@ -75,4 +75,28 @@ Last run: 2026-11-26 by Claude via `scripts/drive-webview.mjs`. A1 passed (DB: 1
 
 ## Windows integration (Phase 6)
 
-Covers tray, close-to-tray, single instance, autostart, and notifications. To be written with the feature.
+Run these on the installed release build when you can: notifications are attributed to PowerShell in `tauri dev` and to TaskFlow only when installed.
+
+| #   | Step                                                               | Expected                                                                                                                    |
+| --- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| W1  | Click the window's X (close-to-tray on)                            | The window hides and the tray icon stays. Timers and reminders keep running.                                                |
+| W2  | Left-click the tray icon. Then right-click → Open TaskFlow         | The window reappears at its previous size and position.                                                                     |
+| W3  | Tray → New task…                                                   | The window opens with the New task dialog.                                                                                  |
+| W4  | Start a timer, then open the tray menu                             | The status line reads "Tracking: … (mm:ss)". Pause/Resume and Stop control the timer. The tooltip shows the same text.      |
+| W5  | Type in a task description, then Tray → Quit without clicking away | The edit is saved (it's in the task's history after restart) and the app exits.                                             |
+| W6  | Settings → turn off "Keep running in the tray", then click X       | The app quits, flushing edits first, instead of hiding.                                                                     |
+| W7  | Launch TaskFlow again while it is running (Start menu or exe)      | No second copy starts. The existing window comes to the front.                                                              |
+| W8  | Settings → Start with Windows on, then sign out and back in        | TaskFlow starts in the tray with no window. Turning it off removes the startup entry.                                       |
+| W9  | Settings → Send test notification                                  | A Windows notification appears. If it doesn't, check Focus Assist and Windows notification settings.                        |
+| W10 | Create a task due in 10 minutes (reminders 15 min before)          | A reminder appears within a minute, once only, even after a restart. Once the time passes, an "Overdue" alert appears once. |
+| W11 | Leave tasks due today, open the app after the summary time         | One "Today: N due today, M overdue" notification, once per day.                                                             |
+| W12 | Resize and move the window, quit, relaunch                         | It reopens with the same size and position.                                                                                 |
+
+Last run: 2026-11-26 by Claude in `tauri dev`, with no OS input simulation.
+
+- W1 passed (WM_CLOSE to TaskFlow's own window: hidden, process alive).
+- W3 and W4 passed by emitting the tray's events: dialog opened; timer running → paused → stopped.
+- W6 passed (process exited after the flush).
+- W7 passed (a second launch exited, and the first window became visible).
+- W10 (reminder) and W11 passed: logged once in `notification_log`, and the toasts were shown.
+- Not run by hand: clicking the real tray menu items, W5's edit flush, W8 (it writes the registry; left for the owner), W12.

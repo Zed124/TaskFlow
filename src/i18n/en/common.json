@@ -326,7 +326,7 @@
     },
     "later": {
       "title": "More settings",
-      "body": "Notifications, tray and startup behavior and backups are added with the features they control (Phases 6–7). Dashboard widgets are customized on the Dashboard itself."
+      "body": "Backups and data export are added in Phase 7. Dashboard widgets are customized on the Dashboard itself."
     },
     "accents": {
       "violet": "Violet",
@@ -347,6 +347,36 @@
         "1": "Monday",
         "6": "Saturday"
       }
+    },
+    "windows": {
+      "title": "Windows",
+      "closeToTray": "Keep running in the tray when closed",
+      "closeToTrayHint": "The close button hides TaskFlow to the system tray so reminders and timers keep working. Quit from the tray menu.",
+      "startup": "Start with Windows",
+      "startupHint": "Opens TaskFlow in the tray when you sign in.",
+      "startupFailed": "Couldn't change the startup setting: {{message}}"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "enabled": "Desktop notifications",
+      "enabledHint": "Windows notifications for the reminders below. Each one is shown only once.",
+      "reminders": "Due-time reminders",
+      "remindersHint": "For tasks that have a due time.",
+      "lead": "When to remind",
+      "atDueTime": "At due time",
+      "minutesBefore_one": "{{count}} minute before",
+      "minutesBefore_other": "{{count}} minutes before",
+      "overdue": "Newly overdue tasks",
+      "overdueHint": "Once, when a task passes its due date or time. Several at once are combined.",
+      "digest": "Daily summary",
+      "digestHint": "One notification a day listing what is due and overdue, only when there is something.",
+      "digestTime": "Summary time",
+      "test": "Test",
+      "testHint": "Check that Windows shows TaskFlow notifications (Focus Assist can hide them).",
+      "sendTest": "Send test notification",
+      "testTitle": "TaskFlow notifications work",
+      "testBody": "You'll see reminders like this one.",
+      "blocked": "Windows didn't allow the notification. Check Settings → System → Notifications."
     }
   },
   "colors": {

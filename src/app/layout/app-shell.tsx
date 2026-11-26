@@ -10,6 +10,8 @@ import { TaskDrawer } from "@/features/tasks/components/task-drawer";
 import { ProjectFormDialog } from "@/features/projects/components/project-form-dialog";
 import { useNavigate } from "react-router";
 import { findNavItem } from "../navigation";
+import { useDesktopIntegration } from "@/features/system/use-desktop-integration";
+import { useNotificationScheduler } from "@/features/notifications/use-notification-scheduler";
 import { useUiStore } from "../ui-store";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
@@ -31,6 +33,8 @@ export function AppShell() {
   const setCreateProjectOpen = useUiStore((s) => s.setCreateProjectOpen);
   const navigate = useNavigate();
   useAppearanceSync();
+  useDesktopIntegration();
+  useNotificationScheduler();
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {

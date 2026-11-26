@@ -70,7 +70,17 @@ legend, tooltips and a table view.
 
 Status-duration reporting from intervals. Timer service (start/pause/resume/stop, survives restarts). Timer UI in the drawer, top bar, and tray. Analytics page (Recharts): daily/weekly/monthly completions, average lead time, priority and project distribution, trends, and status duration vs. tracked time shown separately.
 
-## Phase 6 — Windows integration 🏁
+## Phase 6 — Windows integration 🏁 ✅
+
+Delivered: system tray (open, new task, live timer line with pause/resume and stop, quit; left
+click opens), close-to-tray (setting, default on), quit flow that flushes pending edits before
+exiting (with a 4 s safety exit), single instance (a second launch focuses the running window),
+Start with Windows via the registry Run key with `--minimized` (window stays in the tray),
+window size/position restore, Windows notifications (due-time reminders with lead time,
+newly-overdue alerts batched above three, daily summary) with per-type settings and a
+`notification_log` that guarantees each is shown once across restarts; test-notification button.
+Also: a Windows app manifest embedded via the linker so `cargo test` binaries start (Common
+Controls v6).
 
 Close-to-tray, tray menu, single instance, quit flow with flush, autostart (`--minimized`), notifications (due soon, overdue, reminder) with per-type settings and dedupe, and a window-state restore. Manual test checklist.
 

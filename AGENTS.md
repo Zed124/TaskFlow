@@ -50,12 +50,15 @@ src/
   db/             executor.ts (SqlExecutor + Database), drivers/ (tauri, node-test), migrator.ts,
                   migrations/NNNN_name.sql, repositories/ (one per aggregate + index.ts), sql.ts
                   (updateById, toFtsQuery), client.ts (app bootstrap)
-  platform/       typed wrappers around Tauri APIs (mock these in tests) — from Phase 6
+  platform/       desktop.ts — typed wrappers for lifecycle/tray events, autostart, notifications
+                  (no-ops outside Tauri)
   lib/            time.ts, ids.ts, errors.ts, validation.ts, format.ts, mutex.ts, cn.ts
   i18n/en/        UI strings (typed keys)
   styles/         index.css — Tailwind v4 tokens (colors, type, accent + density variables)
   test/           setup.ts, test-db.ts (fresh migrated in-memory DB)
-src-tauri/src/    lib.rs (setup, command registration), db.rs (rusqlite bridge), commands.rs
+src-tauri/src/    lib.rs (plugins, setup, command registration), db.rs (rusqlite bridge), commands.rs,
+                  desktop.rs (tray, close-to-tray, quit flow, --minimized). build.rs embeds
+                  windows-app-manifest.xml for every binary (keep tauri-build's own manifest off).
 scripts/          dev-inspect.ps1 + drive-webview.mjs (UI automation over DevTools)
 docs/             architecture, database, roadmap, manual-test-checklist
 ```
@@ -67,6 +70,10 @@ Adding a write use case: a service method that validates with Zod (`parseOrThrow
 activity via `record(...)`. Call it from the UI only through `useServiceMutation`, which refreshes
 queries and toasts errors. New activity event types need a payload schema in `domain/activity.ts`
 and a sentence in `features/activity/describe-event.ts`.
+Desktop: native events are handled in `features/system/use-desktop-integration.ts`; quitting must
+go through the flush (Rust emits `app://quit-requested`, the frontend blurs editors, waits for
+mutations, then calls `app_exit`). Notifications: rules live in `domain/notifications.ts`
+(pure, tested); delivery is recorded in `notification_log` before showing.
 Timer: all writes go through `timer` service; code that closes or deletes tasks must call
 `stopActiveForTasks` (timer-core) in the same transaction. Charts: colors from
 `features/analytics/components/chart-theme.ts` (validated palette; color follows the measure).

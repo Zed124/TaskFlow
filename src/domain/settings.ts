@@ -22,9 +22,34 @@ export const settingDefinitions = {
   "onboarding.completed": define(z.boolean(), false),
   /** 0 = Sunday, 1 = Monday, 6 = Saturday. Used by the calendar, week groupings and analytics. */
   "ui.weekStartsOn": define(z.union([z.literal(0), z.literal(1), z.literal(6)]), 1),
+  /** Close button hides to the tray instead of quitting. */
+  "system.closeToTray": define(z.boolean(), true),
+  /** Master switch for Windows notifications. */
+  "notifications.enabled": define(z.boolean(), true),
+  /** Remind before tasks that have a due time. */
+  "notifications.reminders": define(z.boolean(), true),
+  "notifications.reminderLeadMinutes": define(
+    z.union([
+      z.literal(0),
+      z.literal(5),
+      z.literal(10),
+      z.literal(15),
+      z.literal(30),
+      z.literal(60),
+    ]),
+    15,
+  ),
+  /** One summary per day of what is due and overdue. */
+  "notifications.dailyDigest": define(z.boolean(), true),
+  "notifications.digestTime": define(z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), "09:00"),
+  /** Alert when a task becomes overdue (once per task and due date). */
+  "notifications.overdue": define(z.boolean(), true),
   /** Order and visibility of dashboard widgets. */
   "dashboard.layout": define(dashboardLayoutSchema, DEFAULT_DASHBOARD_LAYOUT),
 };
+
+export const REMINDER_LEADS = [0, 5, 10, 15, 30, 60] as const;
+export type ReminderLead = (typeof REMINDER_LEADS)[number];
 
 export const WEEK_STARTS = [1, 0, 6] as const;
 export type WeekStart = (typeof WEEK_STARTS)[number];
