@@ -2,6 +2,26 @@
   "app": {
     "name": "TaskFlow"
   },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "delete": "Delete",
+    "edit": "Edit",
+    "archive": "Archive",
+    "unarchive": "Restore from archive",
+    "restore": "Restore",
+    "none": "None",
+    "more": "More actions",
+    "close": "Close",
+    "loading": "Loading",
+    "loadMore": "Load more",
+    "archived": "Archived",
+    "showArchived": "Show archived",
+    "clearFilters": "Clear filters",
+    "edited": "edited",
+    "unknownError": "Something went wrong: {{message}}"
+  },
   "nav": {
     "sections": {
       "main": "Main",
@@ -29,8 +49,8 @@
     "primary": "Primary navigation"
   },
   "topbar": {
-    "search": "Search or run a command",
-    "searchUnavailable": "Search and the command palette arrive in Phase 4"
+    "search": "Search tasks, projects, notes",
+    "newTask": "New task"
   },
   "boot": {
     "opening": "Opening your workspace",
@@ -47,6 +67,228 @@
       "views": "the productivity views",
       "analytics": "time tracking and analytics"
     }
+  },
+  "status": {
+    "todo": "To do",
+    "in_progress": "In progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "label": "Status",
+    "markComplete": "Mark complete",
+    "markIncomplete": "Mark as to do"
+  },
+  "priority": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "urgent": "Urgent",
+    "label": "Priority"
+  },
+  "due": {
+    "label": "Due date",
+    "time": "Time",
+    "none": "No due date",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday",
+    "overdue": "Overdue",
+    "clear": "Clear due date",
+    "any": "Any due date",
+    "overdueOnly": "Overdue",
+    "next7": "Next 7 days",
+    "hasDate": "Has a due date",
+    "noDate": "No due date"
+  },
+  "tasks": {
+    "title": "Title",
+    "titlePlaceholder": "What needs to be done?",
+    "description": "Description",
+    "descriptionPlaceholder": "Add details",
+    "notes": "Notes",
+    "notesPlaceholder": "Working notes, links, anything to keep with the task",
+    "project": "Project",
+    "category": "Category",
+    "noProject": "No project",
+    "noCategory": "No category",
+    "subtaskProjectHint": "Subtasks follow their parent's project",
+    "create": {
+      "title": "New task",
+      "submit": "Create task",
+      "more": "Create another",
+      "created": "Task created"
+    },
+    "empty": {
+      "title": "No tasks yet",
+      "body": "Tasks you create appear here. Start with whatever is on your mind.",
+      "filteredTitle": "Nothing matches these filters",
+      "filteredBody": "Try removing a filter or searching for something else."
+    },
+    "filter": {
+      "search": "Filter tasks",
+      "status": "Status",
+      "priority": "Priority",
+      "project": "Project",
+      "category": "Category",
+      "due": "Due",
+      "sort": "Sort",
+      "count_one": "{{count}} task",
+      "count_other": "{{count}} tasks"
+    },
+    "sort": {
+      "created": "Newest first",
+      "updated": "Recently updated",
+      "due": "Due date",
+      "priority": "Priority",
+      "title": "Title",
+      "manual": "Manual order"
+    },
+    "subtasks": {
+      "title": "Subtasks",
+      "add": "Add a subtask",
+      "progress": "{{done}} of {{total}} done",
+      "remove": "Delete subtask"
+    },
+    "drawer": {
+      "heading": "Task",
+      "notFoundTitle": "This task isn't available",
+      "notFoundBody": "It may have been deleted. Deleted tasks keep their history and can be restored right after deleting.",
+      "parent": "Subtask of",
+      "openParent": "Open parent task",
+      "created": "Created {{date}}",
+      "updated": "Updated {{date}}"
+    },
+    "completions": {
+      "title": "Completion history",
+      "completed": "Completed {{date}}",
+      "reopened": "reopened {{date}}",
+      "current": "current"
+    },
+    "time": {
+      "title": "Time",
+      "inProgress": "Time in progress",
+      "inProgressHint": "How long the task has sat in the In progress status across {{count}} stretch(es). This measures status duration, not time actually worked.",
+      "ongoing": "still in progress",
+      "never": "Never started",
+      "tracked": "Tracked work",
+      "trackedLater": "The manual work timer (start, pause, resume, stop) arrives in Phase 5."
+    },
+    "actions": {
+      "delete": "Delete task",
+      "deleteConfirmTitle": "Delete “{{title}}”?",
+      "deleteConfirmBody": "The task and its subtasks move out of your lists. Their history is kept, and you can restore the task from the notification that follows.",
+      "deleted": "Task deleted",
+      "archived": "Task archived",
+      "restored": "Task restored"
+    }
+  },
+  "activity": {
+    "title": "Activity",
+    "notePlaceholder": "Add a note to the timeline",
+    "addNote": "Add note",
+    "editNote": "Edit note",
+    "systemEvent": "Recorded automatically",
+    "userNote": "Note",
+    "filterAll": "Everything",
+    "filterNotes": "Notes",
+    "filterSystem": "Changes",
+    "empty": "Nothing has happened yet. Changes to tasks, projects and categories are recorded here automatically.",
+    "end": "That's the beginning of your history.",
+    "deletedTask": "a deleted task",
+    "events": {
+      "created": "created this",
+      "createdTask": "created <b>{{title}}</b>",
+      "createdSubtask": "created this as a subtask",
+      "field_changed": "changed the {{field}}",
+      "field_changed_title": "renamed from “{{from}}” to “{{to}}”",
+      "status_changed": "changed status from {{from}} to {{to}}",
+      "completed": "completed this",
+      "cancelled": "cancelled this",
+      "reopened": "reopened this ({{from}} → {{to}})",
+      "priority_changed": "changed priority from {{from}} to {{to}}",
+      "due_set": "set the due date to {{to}}",
+      "due_changed": "changed the due date from {{from}} to {{to}}",
+      "due_cleared": "removed the due date",
+      "project_set": "moved to {{to}}",
+      "project_changed": "moved from {{from}} to {{to}}",
+      "project_cleared": "removed from {{from}}",
+      "category_set": "set the category to {{to}}",
+      "category_changed": "changed the category from {{from}} to {{to}}",
+      "category_cleared": "removed the category {{from}}",
+      "subtask_added": "added subtask “{{title}}”",
+      "subtask_removed": "removed subtask “{{title}}”",
+      "archived": "archived this",
+      "unarchived": "restored this from the archive",
+      "deleted": "deleted this",
+      "restored": "restored this",
+      "unknown": "recorded an event ({{type}})",
+      "undo": "(undo)"
+    },
+    "fields": {
+      "title": "title",
+      "description": "description",
+      "notes": "notes",
+      "name": "name",
+      "color": "color"
+    },
+    "subjects": {
+      "task": "Task",
+      "project": "Project",
+      "category": "Category"
+    }
+  },
+  "projects": {
+    "new": "New project",
+    "name": "Name",
+    "namePlaceholder": "Project name",
+    "description": "Description",
+    "descriptionPlaceholder": "What is this project about?",
+    "color": "Color",
+    "edit": "Edit project",
+    "progress": "{{completed}} of {{total}} done",
+    "noTasks": "No tasks yet",
+    "counts": "{{open}} to do · {{inProgress}} in progress · {{completed}} done",
+    "archivedBadge": "Archived",
+    "empty": {
+      "title": "No projects yet",
+      "body": "Group related tasks into a project to see their progress together. Tasks can also stay standalone."
+    },
+    "archiveHint": "Archived projects leave your lists but keep their tasks and history.",
+    "deleteConfirmTitle": "Delete project “{{name}}”?",
+    "deleteConfirmBody": "Its {{count}} task(s) are kept and become standalone. Each task's history records the change. Consider archiving instead if you just want it out of the way.",
+    "deleted": "Project deleted",
+    "notFound": "This project isn't available. It may have been deleted.",
+    "back": "All projects",
+    "tasksHeading": "Tasks",
+    "addTask": "Add task to project"
+  },
+  "categories": {
+    "new": "New category",
+    "namePlaceholder": "Category name",
+    "add": "Add",
+    "rename": "Rename",
+    "color": "Change color",
+    "counts": "{{open}} open · {{total}} total",
+    "empty": {
+      "title": "No categories yet",
+      "body": "Categories describe what kind of task something is, like Errands, Health or Admin. Add one below."
+    },
+    "deleteConfirmTitle": "Delete category “{{name}}”?",
+    "deleteConfirmBody": "It is removed from {{count}} task(s). The tasks themselves are kept, and each one's history records the change.",
+    "deleted": "Category deleted",
+    "viewTasks": "View tasks"
+  },
+  "search": {
+    "placeholder": "Search tasks, projects, categories and notes",
+    "empty": "No results for “{{query}}”",
+    "hint": "Type to search. Matches titles, descriptions, notes and timeline notes.",
+    "groups": {
+      "task": "Tasks",
+      "project": "Projects",
+      "category": "Categories",
+      "note": "Notes"
+    },
+    "inTask": "in {{title}}",
+    "subtaskOf": "subtask of {{title}}"
   },
   "settings": {
     "title": "Settings",
@@ -78,5 +320,16 @@
       "rose": "Rose"
     },
     "saveFailed": "Couldn't save the setting: {{message}}"
+  },
+  "colors": {
+    "slate": "Slate",
+    "violet": "Violet",
+    "blue": "Blue",
+    "teal": "Teal",
+    "green": "Green",
+    "amber": "Amber",
+    "orange": "Orange",
+    "rose": "Rose",
+    "pink": "Pink"
   }
 }

@@ -36,12 +36,12 @@ const color = z.enum(ENTITY_COLOR_NAMES as [EntityColor, ...EntityColor[]]).null
 
 export const createProjectSchema = z.object({
   name,
-  description: z.string().max(10_000).default(""),
+  description: z.string().trim().max(10_000).default(""),
   color: color.default("violet"),
 });
 export type CreateProjectInput = z.input<typeof createProjectSchema>;
 
 export const updateProjectSchema = z
-  .object({ name, description: z.string().max(10_000), color })
+  .object({ name, description: z.string().trim().max(10_000), color })
   .partial();
 export type UpdateProjectPatch = z.input<typeof updateProjectSchema>;

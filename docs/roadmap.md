@@ -25,7 +25,15 @@ Each phase ends with: typecheck, lint, and tests green; a `tauri build` at the m
 
 **Done when:** the app launches, the DB is created and migrated, the sidebar collapse persists across restarts, and a production `.msi`/`.exe` builds.
 
-## Phase 3 — Core task management
+## Phase 3 — Core task management ✅
+
+Delivered: task/project/category/activity services with transactional history; All tasks list with
+filters (status, priority, project, category, due presets, text, archived) and sorting; task drawer
+(inline editing, subtasks, notes, completion history, status-duration readout, activity timeline with
+user notes); create-task dialog (Ctrl+N); Projects list/detail with derived progress, archive and
+delete; Categories with rename/recolor/delete; Activity history feed; Ctrl+K full-text search over
+tasks, projects, categories and notes. Deleting/archiving offers an immediate Restore in a toast
+(the general undo stack is still Phase 7).
 
 1. Domain: status transition rules, priority, and Zod schemas for task input and activity payloads.
 2. Repositories and services: tasks, subtasks, projects, categories, activity, completions, and status intervals, all transactional.

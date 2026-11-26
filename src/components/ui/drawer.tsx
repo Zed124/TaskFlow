@@ -31,6 +31,7 @@ export function Drawer({
         <D.Overlay className="fixed inset-0 z-30 animate-fade-in bg-black/25" />
         <D.Content
           aria-describedby={undefined}
+          onOpenAutoFocus={(e) => e.preventDefault()}
           className={cn(
             "fixed inset-y-0 end-0 z-40 flex w-[min(560px,92vw)] animate-slide-in-end flex-col",
             "border-s border-line-strong bg-surface shadow-drawer focus:outline-none",

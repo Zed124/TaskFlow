@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from "react";
 import { DropdownMenu as M } from "radix-ui";
-import type { LucideIcon } from "lucide-react";
+import { Check, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Kbd } from "./kbd";
 
@@ -57,4 +57,54 @@ export function DropdownMenuItem({
 
 export function DropdownMenuSeparator() {
   return <M.Separator className="-mx-1 my-1 h-px bg-line" />;
+}
+
+export function DropdownMenuLabel({ children }: { children: ReactNode }) {
+  return (
+    <M.Label className="px-2 pt-1.5 pb-1 text-2xs font-medium text-fg-subtle">{children}</M.Label>
+  );
+}
+
+const checkable =
+  "relative flex h-7 items-center gap-2 rounded-sm ps-7 pe-2 text-sm text-fg outline-none select-none data-[highlighted]:bg-hover";
+
+/** Multi-select item; keeps the menu open so several options can be toggled. */
+export function DropdownMenuCheckboxItem({
+  children,
+  className,
+  onSelect,
+  ...props
+}: ComponentProps<typeof M.CheckboxItem>) {
+  return (
+    <M.CheckboxItem
+      className={cn(checkable, className)}
+      onSelect={(event) => {
+        event.preventDefault();
+        onSelect?.(event);
+      }}
+      {...props}
+    >
+      <M.ItemIndicator className="absolute start-2 inline-flex">
+        <Check className="size-3.5 text-accent-text" aria-hidden />
+      </M.ItemIndicator>
+      {children}
+    </M.CheckboxItem>
+  );
+}
+
+export const DropdownMenuRadioGroup = M.RadioGroup;
+
+export function DropdownMenuRadioItem({
+  children,
+  className,
+  ...props
+}: ComponentProps<typeof M.RadioItem>) {
+  return (
+    <M.RadioItem className={cn(checkable, className)} {...props}>
+      <M.ItemIndicator className="absolute start-2 inline-flex">
+        <Check className="size-3.5 text-accent-text" aria-hidden />
+      </M.ItemIndicator>
+      {children}
+    </M.RadioItem>
+  );
 }

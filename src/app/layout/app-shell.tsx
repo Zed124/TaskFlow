@@ -1,9 +1,14 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
+import { Toaster } from "@/components/ui/toaster";
 import { useSetting } from "@/features/settings/use-settings";
 import { useAppearanceSync } from "@/features/settings/appearance";
+import { SearchDialog } from "@/features/search/search-dialog";
+import { CreateTaskDialog } from "@/features/tasks/components/create-task-dialog";
+import { TaskDrawer } from "@/features/tasks/components/task-drawer";
 import { findNavItem } from "../navigation";
+import { useUiStore } from "../ui-store";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 
@@ -18,19 +23,29 @@ export function AppShell() {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const [collapsed, setCollapsed] = useSetting("ui.sidebarCollapsed");
+  const setSearchOpen = useUiStore((s) => s.setSearchOpen);
+  const openCreate = useUiStore((s) => s.openCreateTask);
   useAppearanceSync();
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && !event.shiftKey && !event.altKey && event.key.toLowerCase() === "b") {
-        if (isEditableTarget(event.target)) return;
+      if (!event.ctrlKey || event.shiftKey || event.altKey) return;
+      const key = event.key.toLowerCase();
+      if (key === "k") {
+        // Works from anywhere, including text fields.
+        event.preventDefault();
+        setSearchOpen(true);
+      } else if (key === "n") {
+        event.preventDefault();
+        openCreate();
+      } else if (key === "b" && !isEditableTarget(event.target)) {
         event.preventDefault();
         setCollapsed(!collapsed);
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [collapsed, setCollapsed]);
+  }, [collapsed, setCollapsed, setSearchOpen, openCreate]);
 
   const item = findNavItem(pathname);
   const title = item ? t(item.labelKey) : t("app.name");
@@ -44,6 +59,10 @@ export function AppShell() {
           <Outlet />
         </div>
       </main>
+      <TaskDrawer />
+      <CreateTaskDialog />
+      <SearchDialog />
+      <Toaster />
     </div>
   );
 }

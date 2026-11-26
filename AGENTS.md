@@ -38,16 +38,19 @@ src/
   main.tsx        entry: CSS, i18n, <App/>
   app/            app.tsx, boot-gate.tsx (open DB → migrate → load settings), router.tsx,
                   navigation.ts (sidebar items + planned phase), services.ts (composition root),
-                  use-services.ts, layout/ (app-shell, sidebar, top-bar), pages/
+                  use-services.ts, data.ts (useServiceQuery / useServiceMutation + query keys),
+                  ui-store.ts + toast-store.ts (zustand), layout/ (app-shell, sidebar, top-bar), pages/
   components/ui/  design-system primitives (Radix + Tailwind), no business logic
-  features/<name>/ components, use-*.ts hooks, <name>-service.ts  (settings exists; tasks, projects,
-                  categories, activity, search, dashboard, kanban, calendar, timeline, analytics,
-                  time-tracking, notifications, backup, command-palette, undo, onboarding to come)
-  domain/         pure types, Zod schemas, rules — no I/O
+  features/<name>/ components/, use-*.ts hooks, <name>-service.ts (+ .test.ts). Exists: settings,
+                  tasks, projects, categories, activity, search. To come: dashboard, kanban, calendar,
+                  timeline, analytics, time-tracking, notifications, backup, undo, onboarding.
+  domain/         pure types, Zod schemas, rules — no I/O (task, project, category, activity,
+                  task-filter, durations, colors, settings)
   db/             executor.ts (SqlExecutor + Database), drivers/ (tauri, node-test), migrator.ts,
-                  migrations/NNNN_name.sql, repositories/, client.ts (app bootstrap)
+                  migrations/NNNN_name.sql, repositories/ (one per aggregate + index.ts), sql.ts
+                  (updateById, toFtsQuery), client.ts (app bootstrap)
   platform/       typed wrappers around Tauri APIs (mock these in tests) — from Phase 6
-  lib/            time.ts, ids.ts, errors.ts, mutex.ts, cn.ts
+  lib/            time.ts, ids.ts, errors.ts, validation.ts, format.ts, mutex.ts, cn.ts
   i18n/en/        UI strings (typed keys)
   styles/         index.css — Tailwind v4 tokens (colors, type, accent + density variables)
   test/           setup.ts, test-db.ts (fresh migrated in-memory DB)
@@ -57,6 +60,12 @@ docs/             architecture, database, roadmap, manual-test-checklist
 
 Adding a page: add a `NavItem` in `app/navigation.ts`, then register its element in `app/router.tsx`. Remove `planned` once the page is real.
 Adding a setting: add it to `settingDefinitions` in `domain/settings.ts` (no migration needed), then read and write it with `useSetting(key)`.
+Adding a write use case: a service method that validates with Zod (`parseOrThrow`), is `async`
+(validation failures must reject, not throw synchronously), runs in `write(ctx => …)` and records
+activity via `record(...)`. Call it from the UI only through `useServiceMutation`, which refreshes
+queries and toasts errors. New activity event types need a payload schema in `domain/activity.ts`
+and a sentence in `features/activity/describe-event.ts`.
+Task drawer: open any task with `useTaskDrawer().open(id)` (it sets `?task=<id>`).
 Adding a migration: create `src/db/migrations/NNNN_name.sql` (the next number) and extend `src/db/schema.test.ts`.
 Design tokens: use `bg-canvas/surface/raised/overlay`, `text-fg/fg-muted/fg-subtle`, `border-line/line-strong`, and `accent`, `accent-soft` and `accent-text`. Never use raw hex in components (the accent swatches on the Settings page are the one documented exception).
 

@@ -46,7 +46,6 @@ export const navItems: readonly NavItem[] = [
     icon: Inbox,
     labelKey: "nav.allTasks",
     section: "main",
-    planned: { phase: 3, scope: "core" },
   },
   {
     id: "today",
@@ -118,7 +117,6 @@ export const navItems: readonly NavItem[] = [
     icon: FolderKanban,
     labelKey: "nav.projects",
     section: "organization",
-    planned: { phase: 3, scope: "core" },
   },
   {
     id: "categories",
@@ -126,7 +124,6 @@ export const navItems: readonly NavItem[] = [
     icon: Tags,
     labelKey: "nav.categories",
     section: "organization",
-    planned: { phase: 3, scope: "core" },
   },
   {
     id: "analytics",
@@ -142,7 +139,6 @@ export const navItems: readonly NavItem[] = [
     icon: History,
     labelKey: "nav.activity",
     section: "insights",
-    planned: { phase: 3, scope: "core" },
   },
   {
     id: "settings",
@@ -161,5 +157,8 @@ export const navSections: readonly { id: NavSectionId; labelKey: ParseKeys }[] =
 ];
 
 export function findNavItem(pathname: string): NavItem | undefined {
-  return navItems.find((item) => item.path === pathname);
+  return (
+    navItems.find((item) => item.path === pathname) ??
+    navItems.find((item) => item.path !== "/" && pathname.startsWith(`${item.path}/`))
+  );
 }
