@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+/*
+ * TaskFlow design tokens.
+ * - Neutrals: cool graphite with a faint violet undertone (static).
+ * - Accent: switchable at runtime via <html data-accent="…">; components only use accent-* utilities.
+ * - Density: <html data-density="compact|comfortable"> changes row heights and paddings.
+ */
+
+@theme {
+  --font-sans: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  --font-display:
+    "Segoe UI Variable Display", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+
+  --text-2xs: 11px;
+  --text-2xs--line-height: 16px;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 13px;
+  --text-sm--line-height: 20px;
+  --text-base: 14px;
+  --text-base--line-height: 22px;
+  --text-lg: 16px;
+  --text-lg--line-height: 24px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 26px;
+  --text-2xl--line-height: 32px;
+
+  --color-canvas: #131318;
+  --color-sidebar: #0f0f13;
+  --color-surface: #19191f;
+  --color-raised: #202028;
+  --color-overlay: #24242d;
+  --color-hover: #ffffff0a;
+  --color-pressed: #ffffff12;
+  --color-line: #26262f;
+  --color-line-strong: #34343f;
+  --color-fg: #e9e9ef;
+  --color-fg-muted: #a1a1b0;
+  --color-fg-subtle: #6c6c7a;
+  --color-fg-disabled: #4a4a55;
+
+  --color-danger: #f0566a;
+  --color-warning: #e8a23a;
+  --color-success: #3fbf8a;
+  --color-info: #5b9cf5;
+
+  /* Priority: muted by default so lists stay calm; urgent is the only loud one. */
+  --color-priority-low: #6c6c7a;
+  --color-priority-medium: #8f9bb3;
+  --color-priority-high: #e8a23a;
+  --color-priority-urgent: #f0566a;
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-popover: 0 0 0 1px #ffffff0d, 0 8px 24px -4px #00000080, 0 2px 6px #00000040;
+  --shadow-drawer: -1px 0 0 #ffffff0d, -16px 0 48px -12px #00000099;
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --animate-fade-in: fade-in 140ms var(--ease-out-quart);
+  --animate-pop-in: pop-in 160ms var(--ease-out-quart);
+  --animate-slide-in-end: slide-in-end 220ms var(--ease-out-quart);
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.98);
+    }
+  }
+  @keyframes slide-in-end {
+    from {
+      transform: translateX(24px);
+      opacity: 0;
+    }
+  }
+}
+
+/* Runtime-switchable accent. `inline` makes utilities reference the variables directly. */
+@theme inline {
+  --color-accent: var(--tf-accent);
+  --color-accent-hover: var(--tf-accent-hover);
+  --color-accent-fg: var(--tf-accent-fg);
+  --color-accent-soft: var(--tf-accent-soft);
+  --color-accent-text: var(--tf-accent-text);
+  --spacing-row: var(--tf-row-h);
+}
+
+:root,
+[data-accent="violet"] {
+  --tf-accent: #8b5cf6;
+  --tf-accent-hover: #9b72f8;
+  --tf-accent-fg: #ffffff;
+  --tf-accent-soft: #8b5cf624;
+  --tf-accent-text: #b9a2fb;
+}
+[data-accent="indigo"] {
+  --tf-accent: #6366f1;
+  --tf-accent-hover: #7577f3;
+  --tf-accent-fg: #ffffff;
+  --tf-accent-soft: #6366f124;
+  --tf-accent-text: #a5a7f8;
+}
+[data-accent="blue"] {
+  --tf-accent: #3b82f6;
+  --tf-accent-hover: #5293f7;
+  --tf-accent-fg: #ffffff;
+  --tf-accent-soft: #3b82f624;
+  --tf-accent-text: #8db8fa;
+}
+[data-accent="teal"] {
+  --tf-accent: #14b8a6;
+  --tf-accent-hover: #2cc6b4;
+  --tf-accent-fg: #04201c;
+  --tf-accent-soft: #14b8a622;
+  --tf-accent-text: #6fdccf;
+}
+[data-accent="emerald"] {
+  --tf-accent: #10b981;
+  --tf-accent-hover: #28c791;
+  --tf-accent-fg: #03211a;
+  --tf-accent-soft: #10b98122;
+  --tf-accent-text: #6ddcb3;
+}
+[data-accent="amber"] {
+  --tf-accent: #f59e0b;
+  --tf-accent-hover: #f7ab2e;
+  --tf-accent-fg: #261800;
+  --tf-accent-soft: #f59e0b22;
+  --tf-accent-text: #f8c56a;
+}
+[data-accent="rose"] {
+  --tf-accent: #f43f5e;
+  --tf-accent-hover: #f65873;
+  --tf-accent-fg: #ffffff;
+  --tf-accent-soft: #f43f5e24;
+  --tf-accent-text: #f991a3;
+}
+
+:root,
+[data-density="comfortable"] {
+  --tf-row-h: 36px;
+  --tf-page-x: 28px;
+}
+[data-density="compact"] {
+  --tf-row-h: 30px;
+  --tf-page-x: 20px;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  html {
+    color-scheme: dark;
+    background: var(--color-canvas);
+  }
+
+  body {
+    @apply bg-canvas font-sans text-sm text-fg antialiased;
+    overflow: hidden;
+    /* Desktop feel: chrome text is not selectable; content areas opt back in with .selectable */
+    user-select: none;
+    cursor: default;
+    font-feature-settings:
+      "ss01",
+      "tnum" 0;
+  }
+
+  input,
+  textarea,
+  [contenteditable="true"],
+  .selectable {
+    user-select: text;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--tf-accent);
+    outline-offset: 1px;
+    border-radius: var(--radius-xs);
+  }
+
+  ::selection {
+    background: var(--tf-accent-soft);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #ffffff14;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #ffffff24;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

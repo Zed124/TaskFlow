@@ -24,17 +24,18 @@ TaskFlow is a local-first Windows desktop app. A Tauri 2 shell hosts a React + T
 
 ## 2. Layers and rules
 
-| Layer | Folder | Responsibility | May depend on |
-|---|---|---|---|
-| UI | `src/app`, `src/components`, `src/features/*/components` | Rendering, user interaction, local UI state | hooks, domain types |
-| Hooks | `src/features/*/hooks` | TanStack Query queries/mutations, cache invalidation | services |
-| Services | `src/features/*/service.ts` | Use cases ("complete task", "move to project"): validation, transactions, activity recording | repositories, domain |
-| Domain | `src/domain` | Pure types, Zod schemas, rules (status transitions, duration math). No I/O. | nothing |
-| Repositories | `src/db/repositories` | SQL for one aggregate. No business rules. | `SqlExecutor` |
-| DB core | `src/db` | `SqlExecutor` interface, adapters, migrator, migrations | — |
-| Platform | `src/platform` | Typed wrappers over Tauri APIs (tray, notifications, autostart, dialogs, fs). Mockable. | Tauri JS APIs |
+| Layer        | Folder                                                   | Responsibility                                                                               | May depend on        |
+| ------------ | -------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------- |
+| UI           | `src/app`, `src/components`, `src/features/*/components` | Rendering, user interaction, local UI state                                                  | hooks, domain types  |
+| Hooks        | `src/features/*/hooks`                                   | TanStack Query queries/mutations, cache invalidation                                         | services             |
+| Services     | `src/features/*/service.ts`                              | Use cases ("complete task", "move to project"): validation, transactions, activity recording | repositories, domain |
+| Domain       | `src/domain`                                             | Pure types, Zod schemas, rules (status transitions, duration math). No I/O.                  | nothing              |
+| Repositories | `src/db/repositories`                                    | SQL for one aggregate. No business rules.                                                    | `SqlExecutor`        |
+| DB core      | `src/db`                                                 | `SqlExecutor` interface, adapters, migrator, migrations                                      | —                    |
+| Platform     | `src/platform`                                           | Typed wrappers over Tauri APIs (tray, notifications, autostart, dialogs, fs). Mockable.      | Tauri JS APIs        |
 
 Hard rules:
+
 - UI never writes SQL or calls repositories directly. Every write goes through a service.
 - Every multi-statement write runs in **one transaction**, and that includes the activity events it produces. History is written atomically with the change it describes.
 - Domain code is pure, so it can be unit-tested without a database.
@@ -44,7 +45,8 @@ Hard rules:
 **Recommendation: a small custom Rust bridge over `rusqlite` (bundled SQLite), not `tauri-plugin-sql`.**
 
 The reasons:
-1. **Transactions.** `tauri-plugin-sql` runs on an sqlx connection *pool*. When `BEGIN`, the writes, and `COMMIT` go out as separate IPC calls, they can land on different connections, so multi-step transactions from JS are unreliable. Atomic history recording is central to this app, so this matters.
+
+1. **Transactions.** `tauri-plugin-sql` runs on an sqlx connection _pool_. When `BEGIN`, the writes, and `COMMIT` go out as separate IPC calls, they can land on different connections, so multi-step transactions from JS are unreliable. Atomic history recording is central to this app, so this matters.
 2. **Testability.** Business logic lives in TypeScript and has to be tested against real SQLite. The services talk to an interface, so the same logic and the same migration files run under Vitest on Node's built-in `node:sqlite`, and in the app on rusqlite.
 3. **FTS5.** Bundled SQLite includes FTS5 for fast global search, with no dependency on the system SQLite.
 
@@ -74,20 +76,21 @@ The cost is roughly 150 lines of Rust that we own. For you, `rusqlite` will feel
 
 ## 5. Identity, time and dates
 
-| Concern | Decision | Why |
-|---|---|---|
-| IDs | UUIDv7 strings (`uuid` package) | Unique across devices for future sync. Time-ordered, so they index well. |
-| Instants | UTC ISO-8601 with milliseconds, `2026-11-26T14:03:22.118Z`, TEXT | Human-readable, sorts lexicographically in chronological order, JSON-friendly. Produced *only* by `lib/time.ts#nowIso()`. |
-| Date-only values (due date) | `YYYY-MM-DD` TEXT, a local calendar date | A due date is a calendar day, not an instant, so it must not shift when the time zone changes. |
-| Optional due time | `HH:mm` TEXT, local | Only allowed together with a due date. |
-| Reminder | `remind_at` as a UTC instant | Notifications fire at an absolute moment. |
-| Analytics day buckets | `completed_on` (local date) stored when the completion happens | "Completed on Tuesday" stays true even if you later travel or change the time zone. |
+| Concern                     | Decision                                                         | Why                                                                                                                       |
+| --------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| IDs                         | UUIDv7 strings (`uuid` package)                                  | Unique across devices for future sync. Time-ordered, so they index well.                                                  |
+| Instants                    | UTC ISO-8601 with milliseconds, `2026-11-26T14:03:22.118Z`, TEXT | Human-readable, sorts lexicographically in chronological order, JSON-friendly. Produced _only_ by `lib/time.ts#nowIso()`. |
+| Date-only values (due date) | `YYYY-MM-DD` TEXT, a local calendar date                         | A due date is a calendar day, not an instant, so it must not shift when the time zone changes.                            |
+| Optional due time           | `HH:mm` TEXT, local                                              | Only allowed together with a due date.                                                                                    |
+| Reminder                    | `remind_at` as a UTC instant                                     | Notifications fire at an absolute moment.                                                                                 |
+| Analytics day buckets       | `completed_on` (local date) stored when the completion happens   | "Completed on Tuesday" stays true even if you later travel or change the time zone.                                       |
 
 Durations are computed from interval rows, never from a single "started at" field.
 
 ## 6. Sync-readiness, without sync
 
 The schema leaves room for sync, but no sync is built:
+
 - Every syncable row has a UUID `id`, plus `created_at`, `updated_at`, and `deleted_at`. Deletes are soft (tombstones).
 - History tables are append-only.
 - There is no auto-increment identity in domain tables.
@@ -102,7 +105,7 @@ The schema leaves room for sync, but no sync is built:
 ## 8. Undo
 
 - Undo is an in-memory, per-session stack of **compensating commands**. Each undoable service call returns an inverse (for example, `moveTask(id, from→to)` returns `moveTask(id, to→from)`).
-- History stays append-only. Undoing a status change records a *new* status-change event with `payload.undo = true`, and completion records are never deleted. The undone action's effect is reversed, but the fact that it happened stays on record.
+- History stays append-only. Undoing a status change records a _new_ status-change event with `payload.undo = true`, and completion records are never deleted. The undone action's effect is reversed, but the fact that it happened stays on record.
 - Delete is a soft delete, so undoing a delete is a restore.
 - After a destructive or batch action, a toast offers "Undo" for about 8 seconds. `Ctrl+Z` also triggers undo when focus is not in a text field.
 
@@ -114,16 +117,16 @@ The schema leaves room for sync, but no sync is built:
 
 ## 10. Windows integration (Rust side)
 
-| Feature | Implementation |
-|---|---|
-| Close to tray | Intercept `WindowEvent::CloseRequested`. If the setting is on, call `prevent_close()` and `hide()`. The webview stays alive, so timers and schedulers keep running. |
-| Tray | Tauri 2 core `TrayIconBuilder` with Open, Quick Add, Pause/Resume timer, and Quit. Left-click restores the window. |
-| Quit | The tray "Quit" item, or Close with the setting off. Rust first emits `app://before-quit`. The frontend flushes pending edits and acknowledges, then the app exits. A running timer needs no action because it is stored as an open segment in the DB. |
-| Single instance | `tauri-plugin-single-instance`. Launching a second instance focuses the existing window. |
-| Autostart | `tauri-plugin-autostart` (HKCU Run key) with a `--minimized` arg, so a Windows-startup launch goes straight to the tray. |
-| Notifications | `tauri-plugin-notification` (Windows toast). A TS scheduler ticks every 60 s while the app is alive, and `notification_log` dedupe keys prevent repeats across restarts. Note: in `tauri dev`, toasts appear under PowerShell's identity. The real app identity only shows in an installed build. |
-| Window state | `tauri-plugin-window-state` restores size and position. |
-| Files | `tauri-plugin-dialog` for pickers, `tauri-plugin-fs` scoped to the backup directory and export targets. |
+| Feature         | Implementation                                                                                                                                                                                                                                                                                    |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Close to tray   | Intercept `WindowEvent::CloseRequested`. If the setting is on, call `prevent_close()` and `hide()`. The webview stays alive, so timers and schedulers keep running.                                                                                                                               |
+| Tray            | Tauri 2 core `TrayIconBuilder` with Open, Quick Add, Pause/Resume timer, and Quit. Left-click restores the window.                                                                                                                                                                                |
+| Quit            | The tray "Quit" item, or Close with the setting off. Rust first emits `app://before-quit`. The frontend flushes pending edits and acknowledges, then the app exits. A running timer needs no action because it is stored as an open segment in the DB.                                            |
+| Single instance | `tauri-plugin-single-instance`. Launching a second instance focuses the existing window.                                                                                                                                                                                                          |
+| Autostart       | `tauri-plugin-autostart` (HKCU Run key) with a `--minimized` arg, so a Windows-startup launch goes straight to the tray.                                                                                                                                                                          |
+| Notifications   | `tauri-plugin-notification` (Windows toast). A TS scheduler ticks every 60 s while the app is alive, and `notification_log` dedupe keys prevent repeats across restarts. Note: in `tauri dev`, toasts appear under PowerShell's identity. The real app identity only shows in an installed build. |
+| Window state    | `tauri-plugin-window-state` restores size and position.                                                                                                                                                                                                                                           |
+| Files           | `tauri-plugin-dialog` for pickers, `tauri-plugin-fs` scoped to the backup directory and export targets.                                                                                                                                                                                           |
 
 ## 11. Backups
 
@@ -148,12 +151,12 @@ The schema leaves room for sync, but no sync is built:
 
 ## 13. Testing strategy
 
-| Level | Tooling | Covers |
-|---|---|---|
-| Domain unit | Vitest | Status transitions, duration math, date helpers, filter builders |
-| Service + repository integration | Vitest + `node:sqlite` adapter + real migrations | Task CRUD, history, completion/reopen, subtasks, projects/categories, time tracking, search, backup round-trip, migrations, settings |
-| Component | Vitest + Testing Library (jsdom) | Drawer editing, Quick Add, palette, Kanban move handlers |
-| Rust | `cargo test` | DB bridge (transactions, errors), settings plumbing |
-| Windows features | Scripted manual checklist (`docs/manual-test-checklist.md`), plus optional WebdriverIO + `tauri-driver` E2E in Phase 8 | Tray, close-to-tray, autostart registry entry, toasts, single instance |
+| Level                            | Tooling                                                                                                                | Covers                                                                                                                               |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Domain unit                      | Vitest                                                                                                                 | Status transitions, duration math, date helpers, filter builders                                                                     |
+| Service + repository integration | Vitest + `node:sqlite` adapter + real migrations                                                                       | Task CRUD, history, completion/reopen, subtasks, projects/categories, time tracking, search, backup round-trip, migrations, settings |
+| Component                        | Vitest + Testing Library (jsdom)                                                                                       | Drawer editing, Quick Add, palette, Kanban move handlers                                                                             |
+| Rust                             | `cargo test`                                                                                                           | DB bridge (transactions, errors), settings plumbing                                                                                  |
+| Windows features                 | Scripted manual checklist (`docs/manual-test-checklist.md`), plus optional WebdriverIO + `tauri-driver` E2E in Phase 8 | Tray, close-to-tray, autostart registry entry, toasts, single instance                                                               |
 
 Gate per significant change: `npm run typecheck && npm run lint && npm test && npm run tauri build` (the build runs at milestones).

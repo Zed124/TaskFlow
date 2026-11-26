@@ -3,49 +3,68 @@
 Guidance for AI coding agents (Codex, Claude Code) and humans working on this repo. Keep it current: when a convention or command changes, update this file in the same commit.
 
 ## What this is
+
 TaskFlow is a local-first personal task manager for **Windows**, built on Tauri 2 + React + TypeScript + Vite + Tailwind v4 + SQLite. It runs fully offline, with no backend server, no cloud sync, and no embedded AI.
 
 Read before substantial work:
+
 - `docs/architecture.md`: layers, DB bridge, lifecycle, testing strategy
 - `docs/database.md`: schema, invariants, event types
 - `docs/roadmap.md`: the current phase and what is in or out of scope
 
 ## Commands
-> Phase 2 creates these. Until then they are planned.
 
-| Task | Command |
-|---|---|
-| Install deps | `npm install` |
-| Run app (dev) | `npm run tauri dev` |
-| Typecheck | `npm run typecheck` |
-| Lint / format | `npm run lint` · `npm run format` |
-| TS tests | `npm test` (Vitest, uses `node:sqlite`, requires Node ≥ 22.13) |
-| Rust tests | `cargo test --manifest-path src-tauri/Cargo.toml` |
-| Production build | `npm run tauri build` |
+Toolchain: Node 26 LTS, Rust stable (MSVC), VS 2022 Build Tools (C++ workload), WebView2.
 
-Before you say a change is done: run typecheck, lint, and `npm test`. Run `cargo test` if you touched Rust, and `npm run tauri build` at milestones.
+| Task                     | Command                                                        |
+| ------------------------ | -------------------------------------------------------------- |
+| Install deps             | `npm install`                                                  |
+| Run app (dev)            | `npm run tauri dev`                                            |
+| Typecheck · lint · tests | `npm run check`                                                |
+| Typecheck                | `npm run typecheck`                                            |
+| Lint / format            | `npm run lint` · `npm run format`                              |
+| TS tests                 | `npm test` (Vitest, uses `node:sqlite`, requires Node ≥ 22.13) |
+| Rust tests               | `npm run test:rust`                                            |
+| Production build         | `npm run tauri build` → `src-tauri/target/release/bundle/`     |
 
-## Project layout (target)
+Before you say a change is done: run `npm run check`. Run `npm run test:rust` if you touched Rust, and `npm run tauri build` at milestones.
+
+Dev database: `%APPDATA%\com.taskflow.app\taskflow.db` (dev and release builds share it). Pre-migration snapshots go to `…\snapshots\`. Running `npm run dev` alone opens a browser tab that cannot reach the DB; always use `npm run tauri dev`.
+
+## Project layout
+
 ```
 src/
-  app/            shell, router, providers, layout (sidebar, top bar)
+  main.tsx        entry: CSS, i18n, <App/>
+  app/            app.tsx, boot-gate.tsx (open DB → migrate → load settings), router.tsx,
+                  navigation.ts (sidebar items + planned phase), services.ts (composition root),
+                  use-services.ts, layout/ (app-shell, sidebar, top-bar), pages/
   components/ui/  design-system primitives (Radix + Tailwind), no business logic
-  features/<name>/ components/ hooks/ service.ts  (tasks, projects, categories,
-                  activity, search, dashboard, kanban, calendar, timeline, analytics,
-                  time-tracking, notifications, backup, settings, command-palette, undo, onboarding)
+  features/<name>/ components, use-*.ts hooks, <name>-service.ts  (settings exists; tasks, projects,
+                  categories, activity, search, dashboard, kanban, calendar, timeline, analytics,
+                  time-tracking, notifications, backup, command-palette, undo, onboarding to come)
   domain/         pure types, Zod schemas, rules — no I/O
-  db/             executor.ts, adapters/, migrator.ts, migrations/NNNN_*.sql, repositories/
-  platform/       typed wrappers around Tauri APIs (mock these in tests)
-  lib/            time.ts, ids.ts, small utilities
-  i18n/en/        UI strings
-src-tauri/        Rust: db bridge, tray, window lifecycle, plugin setup
+  db/             executor.ts (SqlExecutor + Database), drivers/ (tauri, node-test), migrator.ts,
+                  migrations/NNNN_name.sql, repositories/, client.ts (app bootstrap)
+  platform/       typed wrappers around Tauri APIs (mock these in tests) — from Phase 6
+  lib/            time.ts, ids.ts, errors.ts, mutex.ts, cn.ts
+  i18n/en/        UI strings (typed keys)
+  styles/         index.css — Tailwind v4 tokens (colors, type, accent + density variables)
+  test/           setup.ts, test-db.ts (fresh migrated in-memory DB)
+src-tauri/src/    lib.rs (setup, command registration), db.rs (rusqlite bridge), commands.rs
 docs/             architecture, database, roadmap, manual-test-checklist
 ```
 
+Adding a page: add a `NavItem` in `app/navigation.ts`, then register its element in `app/router.tsx`. Remove `planned` once the page is real.
+Adding a setting: add it to `settingDefinitions` in `domain/settings.ts` (no migration needed), then read and write it with `useSetting(key)`.
+Adding a migration: create `src/db/migrations/NNNN_name.sql` (the next number) and extend `src/db/schema.test.ts`.
+Design tokens: use `bg-canvas/surface/raised/overlay`, `text-fg/fg-muted/fg-subtle`, `border-line/line-strong`, and `accent`, `accent-soft` and `accent-text`. Never use raw hex in components (the accent swatches on the Settings page are the one documented exception).
+
 ## Architecture rules (non-negotiable)
+
 1. **Flow:** UI → hooks (TanStack Query) → service → repository → `SqlExecutor`. UI never touches SQL or repositories.
 2. **Every write is a service call in one transaction**, and that includes the activity events it produces.
-3. **History is append-only.** Never delete or rewrite `activity_events`, `completion_events`, `status_intervals`, or work segments as part of a normal operation. Reopening a task marks the completion `reopened_at`; it does not delete it. Undo is a *compensating* action that writes new history.
+3. **History is append-only.** Never delete or rewrite `activity_events`, `completion_events`, `status_intervals`, or work segments as part of a normal operation. Reopening a task marks the completion `reopened_at`; it does not delete it. Undo is a _compensating_ action that writes new history.
 4. **Archive ≠ delete.** Archive sets `archived_at`. Delete is a soft delete (`deleted_at`). A hard delete happens only through an explicit purge feature.
 5. **Status-duration and tracked work time are separate metrics** with separate labels. Never sum them or present them as the same thing.
 6. **Migrations are forward-only.** Never edit a committed migration; add a new one with a test.
@@ -54,6 +73,7 @@ docs/             architecture, database, roadmap, manual-test-checklist
 9. Never ship a fake feature. If something is not implemented, show an honest empty state ("Available in a later version"), never a working-looking placeholder.
 
 ## Data conventions
+
 - IDs: UUIDv7 strings from `lib/ids.ts#newId()`.
 - Instants: UTC ISO-8601 with ms (`2026-11-26T14:03:22.118Z`), only from `lib/time.ts#nowIso()`. Tests inject a clock.
 - Calendar dates: `YYYY-MM-DD` local (`due_date`, `completed_on`). Never convert a due date to an instant.
@@ -61,6 +81,7 @@ docs/             architecture, database, roadmap, manual-test-checklist
 - Enums are string literals that match DB CHECK constraints: `'todo' | 'in_progress' | 'completed' | 'cancelled'`, `'low' | 'medium' | 'high' | 'urgent'`.
 
 ## TypeScript & React conventions
+
 - Run with `strict` and `noUncheckedIndexedAccess`. **No `any`.** Use `unknown` + Zod at boundaries (IPC results, backup files, settings JSON).
 - Validate user input and external data with Zod schemas from `src/domain`.
 - Errors: services throw typed `AppError` subclasses (`ValidationError`, `NotFoundError`, `ConflictError`). The UI shows them via toast or inline messages. Never swallow errors silently.
@@ -72,18 +93,22 @@ docs/             architecture, database, roadmap, manual-test-checklist
 - Accessibility: interactive elements are real buttons or links, have visible focus, are reachable by keyboard, and icon-only buttons have `aria-label`.
 
 ## Testing
+
 - Service and repository tests run on the **real migrations** via the `node:sqlite` adapter. Each test gets a fresh in-memory DB.
 - Each bug fix gets a regression test where practical.
 - Windows-only behaviour (tray, autostart, toasts, single instance) is covered in `docs/manual-test-checklist.md`. Update it when that behaviour changes.
 - Do not disable, skip, or loosen tests or lint rules to get green. Fix the cause.
 
 ## Dependencies
-Approved core set: react, react-router, @tanstack/react-query, zustand, zod, date-fns, uuid, i18next, react-i18next, @radix-ui/*, cmdk, @dnd-kit/*, recharts, lucide-react, tailwindcss; Tauri plugins: notification, autostart, dialog, fs, single-instance, window-state; Rust: rusqlite (bundled), serde. Ask before adding anything else, and prefer the platform or a few lines of code over a new package.
+
+Approved core set: react, react-router, @tanstack/react-query, zustand, zod, date-fns, uuid, i18next, react-i18next, radix-ui, clsx, tailwind-merge, cmdk, @dnd-kit/\*, recharts, lucide-react, tailwindcss; Tauri plugins: notification, autostart, dialog, fs, single-instance, window-state; Rust: rusqlite (bundled), serde. Ask before adding anything else, and prefer the platform or a few lines of code over a new package.
 
 ## Git
+
 - Small, logical commits in imperative mood (`Add completion history repository`). Commit at each meaningful milestone.
 - Never commit `node_modules/`, `dist/`, `src-tauri/target/`, `*.db`, or backups.
 - Ask the owner before major architectural changes or before removing existing functionality.
 
 ## Working with the owner
+
 The owner is an experienced C#/.NET/SQL/JS developer who is new to TypeScript and Tauri. Briefly explain unfamiliar TS or Tauri concepts when they matter. After each stage, report the changed files, how to run and verify, and anything not yet verified.

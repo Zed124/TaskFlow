@@ -1,0 +1,82 @@
+{
+  "app": {
+    "name": "TaskFlow"
+  },
+  "nav": {
+    "sections": {
+      "main": "Main",
+      "organization": "Organization",
+      "insights": "Insights",
+      "application": "Application"
+    },
+    "dashboard": "Dashboard",
+    "allTasks": "All tasks",
+    "today": "My Day",
+    "upcoming": "Upcoming",
+    "overdue": "Overdue",
+    "inProgress": "In progress",
+    "completed": "Completed",
+    "calendar": "Calendar",
+    "board": "Board",
+    "timeline": "Timeline",
+    "projects": "Projects",
+    "categories": "Categories",
+    "analytics": "Analytics",
+    "activity": "Activity history",
+    "settings": "Settings",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
+    "primary": "Primary navigation"
+  },
+  "topbar": {
+    "search": "Search or run a command",
+    "searchUnavailable": "Search and the command palette arrive in Phase 4"
+  },
+  "boot": {
+    "opening": "Opening your workspace",
+    "failedTitle": "TaskFlow couldn't open its database",
+    "failedHint": "Your data hasn't been changed. Try again, and if the problem continues, note the message below.",
+    "retry": "Try again",
+    "notInDesktop": "TaskFlow is running in a browser tab. Start it with \"npm run tauri dev\" so it can reach the local database."
+  },
+  "placeholder": {
+    "title": "{{page}} isn't built yet",
+    "body": "This view is planned for Phase {{phase}}: {{scope}}. Nothing here is simulated, so it will stay empty until then.",
+    "scopes": {
+      "core": "core task management",
+      "views": "the productivity views",
+      "analytics": "time tracking and analytics"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": {
+      "title": "Appearance",
+      "accent": "Accent color",
+      "accentHint": "Used for selection, focus and primary actions.",
+      "density": "Layout density",
+      "densityHint": "Compact fits more rows on screen.",
+      "comfortable": "Comfortable",
+      "compact": "Compact"
+    },
+    "sidebar": {
+      "title": "Sidebar",
+      "collapsed": "Collapsed sidebar",
+      "collapsedHint": "Show icons only. Toggle any time with Ctrl+B."
+    },
+    "later": {
+      "title": "More settings",
+      "body": "Notifications, tray and startup behavior, backups and dashboard layout are added with the features they control (Phases 4–7)."
+    },
+    "accents": {
+      "violet": "Violet",
+      "indigo": "Indigo",
+      "blue": "Blue",
+      "teal": "Teal",
+      "emerald": "Emerald",
+      "amber": "Amber",
+      "rose": "Rose"
+    },
+    "saveFailed": "Couldn't save the setting: {{message}}"
+  }
+}

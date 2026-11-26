@@ -4,7 +4,7 @@ Status: **Proposed (Phase 1)**. The DDL below is the draft of `0001_initial.sql`
 
 ## 1. Principles
 
-1. **Current state and history are separate.** `tasks` holds what is true *now*. `activity_events`, `completion_events`, `status_intervals` and `work_sessions` hold what *happened*. History rows are append-only: they are never updated, except to close an open interval or mark a completion as reopened.
+1. **Current state and history are separate.** `tasks` holds what is true _now_. `activity_events`, `completion_events`, `status_intervals` and `work_sessions` hold what _happened_. History rows are append-only: they are never updated, except to close an open interval or mark a completion as reopened.
 2. **Nothing historical is destroyed by normal use.** Archive sets `archived_at`. Delete sets `deleted_at` (a soft delete, which is undoable). Only an explicit "purge" ever hard-deletes, and `ON DELETE CASCADE` then removes dependent history with it.
 3. **The DB enforces invariants where it cheaply can** through CHECK constraints, foreign keys, and partial unique indexes such as "one open interval per task". Services enforce the rest inside transactions.
 4. **Formats are fixed.** Instants are UTC ISO-8601 with milliseconds (`...Z`). Calendar dates are `YYYY-MM-DD`. IDs are UUIDv7 text.
@@ -27,18 +27,18 @@ settings (key/value) · backup_runs · schema_migrations · search_index (FTS5)
 
 ## 3. Key decisions
 
-| # | Decision | Alternative considered | Reason |
-|---|---|---|---|
-| D1 | **A subtask is a task with `parent_id`**, one level deep (enforced in the service) | Separate checklist table | Subtasks get status, priority, due date, history and time tracking for free, and every view and query works on them. One level keeps the UI simple. |
-| D2 | **Completions are their own table** (`completion_events`) and `tasks.completed_at` mirrors only the *current* completion | Overwrite `completed_at` | Complete Mon → reopen Tue → complete Thu leaves 2 rows. The Monday row gets `reopened_at` = Tue and is never deleted. |
-| D3 | **Status intervals** (`status_intervals`): a row per stay in a status, exactly one open per task | A single `started_at` column | Sums in-progress time correctly across multiple In Progress stretches and reopen cycles. This is a measurement of how long a task *sat in a status*, not of how much work was done on it. |
-| D4 | **Manual timer = session + segments.** Pause closes a segment; Resume opens a new one; Stop closes the session | One row per start/stop | Models Start/Pause/Resume/Stop exactly, survives app restarts (an open segment is just a row), and makes "tracked work" sum only real segments. |
-| D5 | **One active timer globally** (running or paused) | Concurrent timers | Matches personal use and avoids double-counting. Enforced by a partial unique index. |
-| D6 | **Activity is generic but strongly keyed**: nullable `task_id`/`project_id`/`category_id` with exactly one set, `event_type`, `source` (`system`/`user`), JSON `payload` | One table per event type | One timeline query, so the global Activity History page is trivial. FKs still cascade on purge. |
-| D7 | `completed_on` (local date) is stored on each completion | Convert UTC→local at query time | Day/week/month analytics stay stable regardless of time-zone changes, and the SQL is simple. |
-| D8 | **Settings are key/value with JSON values**, validated by a Zod schema in TS. Backup config lives in settings under `backup.*`, and run history in `backup_runs` | A wide settings table | Adding a setting needs no migration. Types are enforced in one place. |
-| D9 | `sort_order REAL` (fractional ordering) | Integer positions | A Kanban drop updates only one row (midpoint between neighbours). Values are renormalized occasionally. |
-| D10 | FTS5 `search_index` kept in sync by triggers | LIKE queries | Fast as the DB grows, and triggers guarantee consistency. |
+| #   | Decision                                                                                                                                                                 | Alternative considered          | Reason                                                                                                                                                                                    |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | **A subtask is a task with `parent_id`**, one level deep (enforced in the service)                                                                                       | Separate checklist table        | Subtasks get status, priority, due date, history and time tracking for free, and every view and query works on them. One level keeps the UI simple.                                       |
+| D2  | **Completions are their own table** (`completion_events`) and `tasks.completed_at` mirrors only the _current_ completion                                                 | Overwrite `completed_at`        | Complete Mon → reopen Tue → complete Thu leaves 2 rows. The Monday row gets `reopened_at` = Tue and is never deleted.                                                                     |
+| D3  | **Status intervals** (`status_intervals`): a row per stay in a status, exactly one open per task                                                                         | A single `started_at` column    | Sums in-progress time correctly across multiple In Progress stretches and reopen cycles. This is a measurement of how long a task _sat in a status_, not of how much work was done on it. |
+| D4  | **Manual timer = session + segments.** Pause closes a segment; Resume opens a new one; Stop closes the session                                                           | One row per start/stop          | Models Start/Pause/Resume/Stop exactly, survives app restarts (an open segment is just a row), and makes "tracked work" sum only real segments.                                           |
+| D5  | **One active timer globally** (running or paused)                                                                                                                        | Concurrent timers               | Matches personal use and avoids double-counting. Enforced by a partial unique index.                                                                                                      |
+| D6  | **Activity is generic but strongly keyed**: nullable `task_id`/`project_id`/`category_id` with exactly one set, `event_type`, `source` (`system`/`user`), JSON `payload` | One table per event type        | One timeline query, so the global Activity History page is trivial. FKs still cascade on purge.                                                                                           |
+| D7  | `completed_on` (local date) is stored on each completion                                                                                                                 | Convert UTC→local at query time | Day/week/month analytics stay stable regardless of time-zone changes, and the SQL is simple.                                                                                              |
+| D8  | **Settings are key/value with JSON values**, validated by a Zod schema in TS. Backup config lives in settings under `backup.*`, and run history in `backup_runs`         | A wide settings table           | Adding a setting needs no migration. Types are enforced in one place.                                                                                                                     |
+| D9  | `sort_order REAL` (fractional ordering)                                                                                                                                  | Integer positions               | A Kanban drop updates only one row (midpoint between neighbours). Values are renormalized occasionally.                                                                                   |
+| D10 | FTS5 `search_index` kept in sync by triggers                                                                                                                             | LIKE queries                    | Fast as the DB grows, and triggers guarantee consistency.                                                                                                                                 |
 
 ## 4. Draft DDL (`0001_initial.sql`)
 
@@ -229,6 +229,7 @@ Payloads are typed in `src/domain/activity.ts` with a Zod discriminated union, a
 ## 6. Status-change transaction (example)
 
 Calling `TaskService.setStatus(taskId, 'completed')` runs **one transaction**:
+
 1. Load the task and assert the transition is allowed (domain rule).
 2. `UPDATE status_intervals SET ended_at = :now WHERE task_id = :id AND ended_at IS NULL`.
 3. `INSERT status_intervals (status='completed', started_at=:now)`.
@@ -240,13 +241,13 @@ Reopening goes the other way: the open completion row gets `reopened_at = :now` 
 
 ## 7. Analytics derivations
 
-| Metric | Source |
-|---|---|
-| Completions per day/week/month | `completion_events GROUP BY completed_on` (week/month bucketing in TS with `date-fns`, respecting the week-start setting) |
-| Completed count | `completion_events`, counting either distinct tasks or all completion events (the UI labels which) |
-| Average completion time (lead time) | `completion_events.completed_at − tasks.created_at`, using only the first completion per task |
-| Time in In Progress | Σ `status_intervals` where status = `in_progress`, open interval measured up to now and shown as "ongoing". Labelled **"Time in progress (status duration)"**. |
-| Tracked work time | Σ closed `work_segments` (+ the running segment shown live). Labelled **"Tracked work time"**. |
-| Distribution by priority / project | `tasks` grouped, excluding deleted. Archived tasks are included only if you toggle them on. |
+| Metric                              | Source                                                                                                                                                         |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Completions per day/week/month      | `completion_events GROUP BY completed_on` (week/month bucketing in TS with `date-fns`, respecting the week-start setting)                                      |
+| Completed count                     | `completion_events`, counting either distinct tasks or all completion events (the UI labels which)                                                             |
+| Average completion time (lead time) | `completion_events.completed_at − tasks.created_at`, using only the first completion per task                                                                  |
+| Time in In Progress                 | Σ `status_intervals` where status = `in_progress`, open interval measured up to now and shown as "ongoing". Labelled **"Time in progress (status duration)"**. |
+| Tracked work time                   | Σ closed `work_segments` (+ the running segment shown live). Labelled **"Tracked work time"**.                                                                 |
+| Distribution by priority / project  | `tasks` grouped, excluding deleted. Archived tasks are included only if you toggle them on.                                                                    |
 
 The two duration metrics are never summed together or shown under the same label. Where a metric has incomplete data (for example, an open interval), it is marked as ongoing or partial in the UI.
