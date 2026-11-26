@@ -15,7 +15,7 @@ No account, no cloud, no tracking. Your tasks, history and time live in one SQLi
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-local-003b57?logo=sqlite&logoColor=white)
 
-[Features](#features) · [Screenshots](#screenshots) · [Getting started](#getting-started) · [How it works](#how-it-works) · [Docs](#documentation)
+**[Download 1.0.0](https://github.com/Zed124/TaskFlow/releases/latest)** · [Features](#features) · [Screenshots](#screenshots) · [Getting started](#getting-started) · [How it works](#how-it-works) · [Docs](#documentation)
 
 <br />
 
@@ -100,13 +100,24 @@ All parts are optional and can go anywhere in the text.
 
 ## Getting started
 
-### Requirements
+### Install
+
+Download `TaskFlow_1.0.0_x64-setup.exe` from the [latest release](https://github.com/Zed124/TaskFlow/releases/latest)
+and run it. It installs for your user only, so no administrator rights are needed. An `.msi` is
+also available.
+
+The installer isn't code-signed yet, so Windows SmartScreen may say "Windows protected your PC".
+Choose **More info**, then **Run anyway**.
+
+### Build from source
+
+#### Requirements
 
 - Windows 10 or 11 with WebView2 (built into Windows 11)
 - [Node.js](https://nodejs.org/) 22.13 or later
 - [Rust](https://rustup.rs/) stable (MSVC) and Visual Studio 2022 Build Tools with the C++ workload
 
-### Run and build
+#### Run and build
 
 ```powershell
 npm install
