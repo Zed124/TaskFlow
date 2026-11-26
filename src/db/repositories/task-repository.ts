@@ -317,6 +317,15 @@ export function createTaskRepository(db: SqlExecutor) {
       }
     },
 
+    async count(filter: TaskFilter = {}): Promise<number> {
+      const { where, params } = buildTaskWhere(filter);
+      const rows = await db.select<{ n: number }>(
+        `SELECT count(*) AS n FROM tasks t LEFT JOIN categories c ON c.id = t.category_id ${where}`,
+        params,
+      );
+      return rows[0]?.n ?? 0;
+    },
+
     /** Direct children, including archived ones; excludes deleted. */
     async listChildren(
       parentId: string,

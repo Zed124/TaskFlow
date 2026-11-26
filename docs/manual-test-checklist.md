@@ -93,6 +93,17 @@ Last run: 2026-11-26 by Claude via `scripts/drive-webview.mjs`. A1 passed (DB: 1
 
 Last run: 2026-11-26 by Claude via `scripts/drive-webview.mjs`. B1 passed (file validated: all 9 tables). U1 passed, via both the toast and Ctrl+Z, with history showing `undo: true`. R1 passed. O1 was checked on the existing profile, where example tasks correctly default to off. B2–B7 involve the native file pickers and were left for hand testing. The restore logic (B4) is covered by the automated tests (round trip, replace, rollback on failure, rejected inputs).
 
+## Release checks (Phase 8)
+
+| #   | Step                                                                                                                                                                                         | Expected                                                                                                                     |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| R1  | Install `TaskFlow_1.0.0_x64-setup.exe` and launch it from the Start menu                                                                                                                     | Your logo appears in the Start menu, the taskbar, the tray and the sidebar. About/installer shows 1.0.0. No admin prompt.    |
+| R2  | Press F5 or Ctrl+R in the installed app. Right-click empty space, then right-click inside a text field                                                                                       | Nothing reloads. There's no browser menu on empty space, and the text field offers cut/copy/paste.                           |
+| R3  | Scale test: `$env:PERF_DB="$env:APPDATA\com.taskflow.perf	askflow.db"; npx vitest run src/test/perf/seed-file`, then `powershell -File scripts/dev-inspect.ps1 -Identifier com.taskflow.perf` | 10,000 tasks in a separate profile. Lists, the Board, Completed and Analytics stay responsive. Your real data isn't touched. |
+| R4  | `npm run a11y` with the dev-inspect app running                                                                                                                                              | "✓ no violations" for every page.                                                                                            |
+
+Last run: 2026-11-26 by Claude. R3 passed (measurements are in the roadmap; regression at scale covered Quick Add, the drawer, complete plus Ctrl+Z, search, board drag plus undo, and counts). R4 passed (15 pages plus the drawer, create dialog and palette). R1 and R2 need the installed build and were left for the owner.
+
 ## Windows integration (Phase 6)
 
 Run these on the installed release build when you can: notifications are attributed to PowerShell in `tauri dev` and to TaskFlow only when installed.

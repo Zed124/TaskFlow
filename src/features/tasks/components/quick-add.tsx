@@ -117,7 +117,7 @@ export function QuickAdd({ defaults = {}, className, autoFocus }: QuickAddProps)
             type="button"
             onClick={submit}
             disabled={!parsed.title.trim() || create.isPending}
-            className="h-7 rounded-sm bg-accent px-2.5 text-xs font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-50"
+            className="h-7 rounded-sm bg-accent-solid px-2.5 text-xs font-medium text-accent-fg hover:bg-accent-solid-hover disabled:opacity-50"
           >
             {t("quickAdd.add")}
           </button>

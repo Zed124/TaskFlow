@@ -116,18 +116,41 @@ function SidebarLink({
   );
 }
 
+/** The TaskFlow logo (same artwork as app-icon.svg / the app icon), drawn inline. */
 function AppMark() {
   return (
     <div className="flex items-center gap-2">
-      <svg viewBox="0 0 20 20" className="size-5" aria-hidden>
-        <rect x="1" y="1" width="18" height="18" rx="5" className="fill-accent" />
-        <path
-          d="M5.5 10.2l3 3 6-6.4"
-          fill="none"
-          stroke="white"
+      <svg viewBox="0 0 112 112" className="size-6" aria-hidden>
+        <rect
+          width="112"
+          height="112"
+          rx="26"
+          fill="#131318"
+          stroke="#ffffff"
+          strokeOpacity="0.12"
           strokeWidth="2"
+        />
+        <path
+          d="M24 38 C32 31 38 34 44 40 L52 48 L88 24"
+          fill="none"
+          stroke="#8b5cf6"
+          strokeWidth="9"
           strokeLinecap="round"
           strokeLinejoin="round"
+        />
+        <path
+          d="M24 64 C34 55 44 73 56 64 S78 55 88 64"
+          fill="none"
+          stroke="#a1a1b0"
+          strokeWidth="8"
+          strokeLinecap="round"
+        />
+        <path
+          d="M24 84 C34 75 44 93 56 84 S78 75 88 84"
+          fill="none"
+          stroke="#6c6c7a"
+          strokeWidth="8"
+          strokeLinecap="round"
         />
       </svg>
       <span className="font-display text-[15px] font-semibold tracking-[-0.01em] text-fg">

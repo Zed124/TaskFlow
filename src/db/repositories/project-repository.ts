@@ -26,12 +26,22 @@ type ProgressRow = ProjectRow & {
 const COLUMNS = `p.id, p.name, p.description, p.color, p.sort_order, p.archived_at, p.created_at,
   p.updated_at, p.deleted_at`;
 
-/** Counts top-level, non-deleted tasks per status. Archived tasks still count: they are part of the project. */
-const PROGRESS = `
-  (SELECT count(*) FROM tasks t WHERE t.project_id = p.id AND t.parent_id IS NULL AND t.deleted_at IS NULL AND t.status = 'todo') AS open_count,
-  (SELECT count(*) FROM tasks t WHERE t.project_id = p.id AND t.parent_id IS NULL AND t.deleted_at IS NULL AND t.status = 'in_progress') AS in_progress_count,
-  (SELECT count(*) FROM tasks t WHERE t.project_id = p.id AND t.parent_id IS NULL AND t.deleted_at IS NULL AND t.status = 'completed') AS completed_count,
-  (SELECT count(*) FROM tasks t WHERE t.project_id = p.id AND t.parent_id IS NULL AND t.deleted_at IS NULL AND t.status = 'cancelled') AS cancelled_count`;
+/**
+ * Counts top-level, non-deleted tasks per status, in one grouped pass over tasks.
+ * Archived tasks still count: they are part of the project.
+ */
+const PROGRESS_JOIN = `LEFT JOIN (
+    SELECT project_id,
+      sum(status = 'todo') AS open_count,
+      sum(status = 'in_progress') AS in_progress_count,
+      sum(status = 'completed') AS completed_count,
+      sum(status = 'cancelled') AS cancelled_count
+    FROM tasks
+    WHERE parent_id IS NULL AND deleted_at IS NULL AND project_id IS NOT NULL
+    GROUP BY project_id
+  ) agg ON agg.project_id = p.id`;
+const PROGRESS = `coalesce(agg.open_count, 0) AS open_count, coalesce(agg.in_progress_count, 0) AS in_progress_count,
+  coalesce(agg.completed_count, 0) AS completed_count, coalesce(agg.cancelled_count, 0) AS cancelled_count`;
 
 function mapProject(r: ProjectRow): Project {
   return {
@@ -108,7 +118,7 @@ export function createProjectRepository(db: SqlExecutor) {
 
     async getWithProgress(id: string): Promise<ProjectWithProgress | null> {
       const rows = await db.select<ProgressRow>(
-        `SELECT ${COLUMNS}, ${PROGRESS} FROM projects p WHERE p.id = ? AND p.deleted_at IS NULL`,
+        `SELECT ${COLUMNS}, ${PROGRESS} FROM projects p ${PROGRESS_JOIN} WHERE p.id = ? AND p.deleted_at IS NULL`,
         [id],
       );
       return rows[0] ? mapWithProgress(rows[0]) : null;
@@ -116,7 +126,7 @@ export function createProjectRepository(db: SqlExecutor) {
 
     async list(options: { includeArchived?: boolean } = {}): Promise<ProjectWithProgress[]> {
       const rows = await db.select<ProgressRow>(
-        `SELECT ${COLUMNS}, ${PROGRESS} FROM projects p
+        `SELECT ${COLUMNS}, ${PROGRESS} FROM projects p ${PROGRESS_JOIN}
          WHERE p.deleted_at IS NULL${options.includeArchived ? "" : " AND p.archived_at IS NULL"}
          ORDER BY p.archived_at IS NOT NULL, p.sort_order, p.name COLLATE NOCASE`,
       );

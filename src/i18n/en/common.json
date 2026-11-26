@@ -432,7 +432,8 @@
     },
     "completed": {
       "emptyTitle": "No completed tasks yet",
-      "emptyBody": "Completed tasks are listed here by the day you finished them."
+      "emptyBody": "Completed tasks are listed here by the day you finished them.",
+      "showing": "Showing the {{shown}} most recent of {{total}}"
     },
     "count_one": "{{count}} task",
     "count_other": "{{count}} tasks"
@@ -443,7 +444,9 @@
     "empty": "No tasks",
     "moved": "Moved to {{status}}",
     "dragHint": "Drag cards between columns to change their status. Space picks up a focused card; arrows move it.",
-    "showCompleted": "Show completed and cancelled"
+    "showCompleted": "Show completed and cancelled",
+    "more": "Showing the {{shown}} most recent of {{total}}. See all",
+    "showMore": "Show {{count}} more"
   },
   "calendar": {
     "today": "Today",

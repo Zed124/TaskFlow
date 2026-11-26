@@ -1,4 +1,6 @@
-import { useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollContainerContext } from "../scroll-container";
 import { Outlet, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Toaster } from "@/components/ui/toaster";
@@ -36,6 +38,7 @@ export function AppShell() {
   const setCreateProjectOpen = useUiStore((s) => s.setCreateProjectOpen);
   const navigate = useNavigate();
   const { undoLast } = useUndo();
+  const [scroller, setScroller] = useState<HTMLDivElement | null>(null);
   useAppearanceSync();
   useDesktopIntegration();
   useNotificationScheduler();
@@ -73,8 +76,13 @@ export function AppShell() {
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
       <main className="flex min-w-0 flex-1 flex-col">
         <TopBar title={title} />
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <Outlet />
+        <div ref={setScroller} className="min-h-0 flex-1 overflow-y-auto">
+          <ScrollContainerContext.Provider value={scroller}>
+            {/* Shown only while a page's code chunk loads (first visit to that page). */}
+            <Suspense fallback={<PageFallback />}>
+              <Outlet />
+            </Suspense>
+          </ScrollContainerContext.Provider>
         </div>
       </main>
       <TaskDrawer />
@@ -88,6 +96,15 @@ export function AppShell() {
       )}
       <OnboardingDialog />
       <Toaster />
+    </div>
+  );
+}
+
+function PageFallback() {
+  return (
+    <div className="flex flex-col gap-2 px-(--tf-page-x) py-6" aria-busy>
+      <Skeleton className="h-6 w-1/3" />
+      <Skeleton className="h-4 w-1/2" />
     </div>
   );
 }

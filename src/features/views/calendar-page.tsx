@@ -119,7 +119,7 @@ export function CalendarPage() {
                     className={cn(
                       "inline-flex size-6 items-center justify-center rounded-full text-xs tabular-nums",
                       key === today
-                        ? "bg-accent font-semibold text-accent-fg"
+                        ? "bg-accent-solid font-semibold text-accent-fg"
                         : outside
                           ? "text-fg-subtle"
                           : "text-fg-muted",

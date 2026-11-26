@@ -20,7 +20,7 @@ import { useSetting } from "@/features/settings/use-settings";
 import { useTodayKey } from "@/features/views/use-now";
 import type { AnalyticsReport } from "./analytics-service";
 import { ChartCard, ChartTooltip, DataTable } from "./components/chart-kit";
-import { AXIS, GRID, SERIES } from "./components/chart-theme";
+import { AXIS, BAR_ANIMATION, GRID, SERIES } from "./components/chart-theme";
 
 /** Hours for real workloads; minutes when every period is under two hours (so small values stay visible). */
 function trackedUnit(maxMs: number): { div: number; suffix: "h" | "m" } {
@@ -153,6 +153,7 @@ function Report({ report }: { report: AnalyticsReport }) {
               <YAxis allowDecimals={false} {...AXIS} />
               <Tooltip cursor={{ fill: "var(--color-hover)" }} content={<ChartTooltip />} />
               <Bar
+                {...BAR_ANIMATION}
                 dataKey="completed"
                 name={t("analytics.series.completed")}
                 fill={SERIES.completed}
@@ -160,6 +161,7 @@ function Report({ report }: { report: AnalyticsReport }) {
                 maxBarSize={18}
               />
               <Bar
+                {...BAR_ANIMATION}
                 dataKey="created"
                 name={t("analytics.series.created")}
                 fill={SERIES.created}
@@ -208,6 +210,7 @@ function Report({ report }: { report: AnalyticsReport }) {
                   }
                 />
                 <Bar
+                  {...BAR_ANIMATION}
                   dataKey="trackedValue"
                   name={t("analytics.series.tracked")}
                   fill={SERIES.tracked}
@@ -256,6 +259,7 @@ function Report({ report }: { report: AnalyticsReport }) {
                 <YAxis type="category" dataKey="label" width={64} {...AXIS} />
                 <Tooltip cursor={{ fill: "var(--color-hover)" }} content={<ChartTooltip />} />
                 <Bar
+                  {...BAR_ANIMATION}
                   dataKey="open"
                   name={t("analytics.series.open")}
                   fill={SERIES.open}
@@ -263,6 +267,7 @@ function Report({ report }: { report: AnalyticsReport }) {
                   maxBarSize={14}
                 />
                 <Bar
+                  {...BAR_ANIMATION}
                   dataKey="completed"
                   name={t("analytics.series.completed")}
                   fill={SERIES.completed}

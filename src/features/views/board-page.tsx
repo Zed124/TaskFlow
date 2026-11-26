@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { Plus } from "lucide-react";
 import {
   closestCorners,
@@ -24,7 +25,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useServiceMutation } from "@/app/data";
+import { useServiceMutation, useServiceQuery } from "@/app/data";
 import { useUndo } from "@/app/use-undo";
 import { useServices } from "@/app/use-services";
 import { useUiStore } from "@/app/ui-store";
@@ -44,6 +45,11 @@ import { useProjects } from "@/features/projects/use-projects";
 import { ListTree } from "lucide-react";
 
 type Columns = Record<TaskStatus, string[]>;
+
+/** Most recent completed/cancelled cards shown on the board. */
+const CLOSED_LIMIT = 50;
+/** Cards rendered per column before "Show more" (drops still use the full column order). */
+const COLUMN_PAGE = 100;
 
 const isColumnId = (id: unknown) => (TASK_STATUSES as readonly unknown[]).includes(id);
 
@@ -83,18 +89,64 @@ export function BoardPage() {
   const openCreate = useUiStore((s) => s.openCreateTask);
   const [projectFilter, setProjectFilter] = useState<string>(EMPTY);
   const { data: projects = [] } = useProjects();
-  const filter: TaskFilter = useMemo(
-    () => ({
-      sort: { field: "manual", direction: "asc" },
-      ...(projectFilter === EMPTY ? {} : { projectIds: [projectFilter] }),
-    }),
+  // Open work keeps its manual order; closed columns show only the most recent, so the board
+  // stays fast with thousands of finished tasks (the full lists live in Completed / All tasks).
+  const scope = useMemo(
+    () => (projectFilter === EMPTY ? {} : { projectIds: [projectFilter] }),
     [projectFilter],
   );
-  const { data, isPending } = useTaskList(filter);
-  const byId = useMemo(() => new Map((data ?? []).map((t) => [t.id, t])), [data]);
-  const serverColumns = useMemo(() => toColumns(data ?? []), [data]);
+  const openFilter: TaskFilter = useMemo(
+    () => ({
+      ...scope,
+      statuses: ["todo", "in_progress"],
+      sort: { field: "manual", direction: "asc" },
+    }),
+    [scope],
+  );
+  const completedFilter: TaskFilter = useMemo(
+    () => ({
+      ...scope,
+      statuses: ["completed"],
+      sort: { field: "completed", direction: "desc" },
+      limit: CLOSED_LIMIT,
+    }),
+    [scope],
+  );
+  const cancelledFilter: TaskFilter = useMemo(
+    () => ({
+      ...scope,
+      statuses: ["cancelled"],
+      sort: { field: "updated", direction: "desc" },
+      limit: CLOSED_LIMIT,
+    }),
+    [scope],
+  );
+  const openTasks = useTaskList(openFilter);
+  const completedTasks = useTaskList(completedFilter);
+  const cancelledTasks = useTaskList(cancelledFilter);
+  const { data: totals } = useServiceQuery(["tasks", "board-totals", scope], async (s) => ({
+    completed: await s.tasks.count({ ...scope, statuses: ["completed"] }),
+    cancelled: await s.tasks.count({ ...scope, statuses: ["cancelled"] }),
+  }));
+  const isPending = openTasks.isPending || completedTasks.isPending || cancelledTasks.isPending;
+  const data = useMemo(
+    () => [
+      ...(openTasks.data ?? []),
+      ...(completedTasks.data ?? []),
+      ...(cancelledTasks.data ?? []),
+    ],
+    [openTasks.data, completedTasks.data, cancelledTasks.data],
+  );
+  const byId = useMemo(() => new Map(data.map((t) => [t.id, t])), [data]);
+  const serverColumns = useMemo(() => toColumns(data), [data]);
   const [override, setOverride] = useState<Columns | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [visible, setVisible] = useState<Record<TaskStatus, number>>({
+    todo: COLUMN_PAGE,
+    in_progress: COLUMN_PAGE,
+    completed: COLUMN_PAGE,
+    cancelled: COLUMN_PAGE,
+  });
   const columns = override ?? serverColumns;
 
   const services = useServices();
@@ -235,6 +287,15 @@ export function BoardPage() {
                 key={status}
                 status={status}
                 ids={columns[status]}
+                visibleCount={visible[status]}
+                onShowMore={() => setVisible((v) => ({ ...v, [status]: v[status] + COLUMN_PAGE }))}
+                total={
+                  status === "completed"
+                    ? totals?.completed
+                    : status === "cancelled"
+                      ? totals?.cancelled
+                      : undefined
+                }
                 byId={byId}
                 onOpen={open}
                 onAdd={() =>
@@ -260,18 +321,26 @@ export function BoardPage() {
 function BoardColumn({
   status,
   ids,
+  visibleCount,
+  onShowMore,
+  total,
   byId,
   onOpen,
   onAdd,
 }: {
   status: TaskStatus;
   ids: string[];
+  visibleCount: number;
+  onShowMore: () => void;
+  /** Full count when the column is truncated (closed columns). */
+  total?: number | undefined;
   byId: Map<string, TaskListItem>;
   onOpen: (id: string) => void;
   onAdd: () => void;
 }) {
   const { t } = useTranslation();
   const { setNodeRef, isOver } = useDroppable({ id: status });
+  const shown = ids.slice(0, visibleCount);
   const label = t(`status.${status}`);
 
   return (
@@ -285,7 +354,7 @@ function BoardColumn({
       <header className="flex h-10 shrink-0 items-center gap-2 px-3">
         <StatusIcon status={status} />
         <h2 className="text-xs font-semibold text-fg">{label}</h2>
-        <span className="text-xs text-fg-subtle tabular-nums">{ids.length}</span>
+        <span className="text-xs text-fg-subtle tabular-nums">{total ?? ids.length}</span>
         <span className="flex-1" />
         <IconButton
           icon={Plus}
@@ -294,15 +363,32 @@ function BoardColumn({
           onClick={onAdd}
         />
       </header>
-      <SortableContext id={status} items={ids} strategy={verticalListSortingStrategy}>
+      <SortableContext id={status} items={shown} strategy={verticalListSortingStrategy}>
         <div
           ref={setNodeRef}
           className="flex min-h-24 flex-1 flex-col gap-1.5 overflow-y-auto px-2 pb-2"
         >
-          {ids.map((id) => {
+          {shown.map((id) => {
             const task = byId.get(id);
             return task ? <SortableCard key={id} task={task} onOpen={onOpen} /> : null;
           })}
+          {ids.length > shown.length && (
+            <button
+              type="button"
+              onClick={onShowMore}
+              className="mt-1 rounded-sm px-2 py-1.5 text-xs text-fg-subtle hover:bg-hover hover:text-fg"
+            >
+              {t("board.showMore", { count: Math.min(ids.length - shown.length, 100) })}
+            </button>
+          )}
+          {total !== undefined && total > ids.length && (
+            <Link
+              to={status === "completed" ? "/completed" : "/tasks"}
+              className="mt-1 rounded-sm px-2 py-1.5 text-center text-xs text-fg-subtle hover:bg-hover hover:text-fg"
+            >
+              {t("board.more", { shown: ids.length, total })}
+            </Link>
+          )}
           {ids.length === 0 && (
             <p className="m-auto py-6 text-xs text-fg-subtle">{t("board.empty")}</p>
           )}
@@ -326,7 +412,6 @@ function SortableCard({ task, onOpen }: { task: TaskListItem; onOpen: (id: strin
       )}
       {...attributes}
       {...listeners}
-      aria-label={task.title}
       onClick={() => onOpen(task.id)}
       onKeyDown={(e) => {
         listeners?.onKeyDown?.(e);

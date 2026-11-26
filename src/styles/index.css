@@ -39,7 +39,8 @@
   --color-line-strong: #34343f;
   --color-fg: #e9e9ef;
   --color-fg-muted: #a1a1b0;
-  --color-fg-subtle: #6c6c7a;
+  /* ≥ 4.5:1 on every surface (WCAG AA for small text). */
+  --color-fg-subtle: #8a8a99;
   --color-fg-disabled: #4a4a55;
 
   --color-danger: #f0566a;
@@ -92,6 +93,9 @@
   --color-accent-fg: var(--tf-accent-fg);
   --color-accent-soft: var(--tf-accent-soft);
   --color-accent-text: var(--tf-accent-text);
+  /* Deeper fill for controls that carry text (≥ 4.5:1 with accent-fg). */
+  --color-accent-solid: var(--tf-accent-solid);
+  --color-accent-solid-hover: var(--tf-accent-solid-hover);
   --spacing-row: var(--tf-row-h);
 }
 
@@ -102,6 +106,8 @@
   --tf-accent-fg: #ffffff;
   --tf-accent-soft: #8b5cf624;
   --tf-accent-text: #b9a2fb;
+  --tf-accent-solid: #7c3aed;
+  --tf-accent-solid-hover: #6d28d9;
 }
 [data-accent="indigo"] {
   --tf-accent: #6366f1;
@@ -109,6 +115,8 @@
   --tf-accent-fg: #ffffff;
   --tf-accent-soft: #6366f124;
   --tf-accent-text: #a5a7f8;
+  --tf-accent-solid: #4f46e5;
+  --tf-accent-solid-hover: #4338ca;
 }
 [data-accent="blue"] {
   --tf-accent: #3b82f6;
@@ -116,6 +124,8 @@
   --tf-accent-fg: #ffffff;
   --tf-accent-soft: #3b82f624;
   --tf-accent-text: #8db8fa;
+  --tf-accent-solid: #2563eb;
+  --tf-accent-solid-hover: #1d4ed8;
 }
 [data-accent="teal"] {
   --tf-accent: #14b8a6;
@@ -123,6 +133,8 @@
   --tf-accent-fg: #04201c;
   --tf-accent-soft: #14b8a622;
   --tf-accent-text: #6fdccf;
+  --tf-accent-solid: #14b8a6;
+  --tf-accent-solid-hover: #2cc6b4;
 }
 [data-accent="emerald"] {
   --tf-accent: #10b981;
@@ -130,6 +142,8 @@
   --tf-accent-fg: #03211a;
   --tf-accent-soft: #10b98122;
   --tf-accent-text: #6ddcb3;
+  --tf-accent-solid: #10b981;
+  --tf-accent-solid-hover: #28c791;
 }
 [data-accent="amber"] {
   --tf-accent: #f59e0b;
@@ -137,6 +151,8 @@
   --tf-accent-fg: #261800;
   --tf-accent-soft: #f59e0b22;
   --tf-accent-text: #f8c56a;
+  --tf-accent-solid: #f59e0b;
+  --tf-accent-solid-hover: #f7ab2e;
 }
 [data-accent="rose"] {
   --tf-accent: #f43f5e;
@@ -144,6 +160,8 @@
   --tf-accent-fg: #ffffff;
   --tf-accent-soft: #f43f5e24;
   --tf-accent-text: #f991a3;
+  --tf-accent-solid: #e11d48;
+  --tf-accent-solid-hover: #be123c;
 }
 
 :root,

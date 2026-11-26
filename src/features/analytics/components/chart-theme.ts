@@ -22,3 +22,10 @@ export const GRID = {
   strokeDasharray: "3 3",
   vertical: false,
 } as const;
+
+/** Short, subtle entry animation; none when the OS asks for reduced motion. */
+export const BAR_ANIMATION = {
+  animationDuration: 400,
+  isAnimationActive:
+    typeof window === "undefined" || !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+} as const;

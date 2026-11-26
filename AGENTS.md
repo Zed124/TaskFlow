@@ -26,6 +26,9 @@ Toolchain: Node 26 LTS, Rust stable (MSVC), VS 2022 Build Tools (C++ workload), 
 | TS tests                 | `npm test` (Vitest, uses `node:sqlite`, requires Node ≥ 22.13) |
 | Rust tests               | `npm run test:rust`                                            |
 | Production build         | `npm run tauri build` → `src-tauri/target/release/bundle/`     |
+| Perf check (10k tasks)   | `$env:PERF=1; npm run perf` (skipped in normal test runs)      |
+| Accessibility audit      | `npm run a11y` (with `scripts/dev-inspect.ps1` running)        |
+| Regenerate app icons     | `npm run icons` (from the owner's `app-icon.svg`)              |
 
 Before you say a change is done: run `npm run check`. Run `npm run test:rust` if you touched Rust, and `npm run tauri build` at milestones.
 
@@ -83,6 +86,9 @@ mutations, then calls `app_exit`). Notifications: rules live in `domain/notifica
 Timer: all writes go through `timer` service; code that closes or deletes tasks must call
 `stopActiveForTasks` (timer-core) in the same transaction. Charts: colors from
 `features/analytics/components/chart-theme.ts` (validated palette; color follows the measure).
+Performance: task lists render through `TaskRows` (windowed above 150 rows, fixed row height
+`--tf-row-h`), so keep rows fixed-height. Pages are lazy-loaded in `app/router.tsx`.
+Brand: the logo is the owner's `app-icon.svg` (also drawn in `sidebar.tsx`). Never replace it.
 Views: every list is a `TaskFilter` (see `domain/smart-lists.ts`); add a view by adding a filter,
 not a new query. Board moves go through `tasks.move` (status + position in one transaction).
 Task drawer: open any task with `useTaskDrawer().open(id)` (it sets `?task=<id>`).

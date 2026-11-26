@@ -23,6 +23,9 @@ import { ArchiveCompletedDialog } from "./components/archive-completed-dialog";
 import { Button } from "@/components/ui/button";
 import { groupBy } from "@/lib/group-by";
 import { useNow, useTodayKey } from "./use-now";
+import { useServiceQuery } from "@/app/data";
+
+const COMPLETED_PAGE = 200;
 
 /** Smart-list filters, recomputed only when the calendar day changes. */
 function useSmartFilters() {
@@ -185,7 +188,12 @@ export function CompletedPage() {
   const { t } = useTranslation();
   const f = useSmartFilters();
   const [archiving, setArchiving] = useState(false);
-  const { data, isPending } = useTaskList(f.completed);
+  // Most recent first, a page at a time: years of completed work stay fast to open.
+  const [limit, setLimit] = useState(COMPLETED_PAGE);
+  const { data, isPending } = useTaskList({ ...f.completed, limit });
+  const { data: total } = useServiceQuery(["tasks", "completed-count", f.completed], (s) =>
+    s.tasks.count(f.completed),
+  );
   const groups = groupBy<TaskListItem>(data ?? [], (task) =>
     task.completedAt ? toLocalDate(parseISO(task.completedAt)) : "",
   );
@@ -215,6 +223,14 @@ export function CompletedPage() {
             tasks={tasks}
           />
         ))
+      )}
+      {total !== undefined && data && total > data.length && (
+        <div className="flex items-center justify-center gap-3 py-4 text-xs text-fg-subtle">
+          {t("views.completed.showing", { shown: data.length, total })}
+          <Button size="sm" variant="secondary" onClick={() => setLimit((l) => l + COMPLETED_PAGE)}>
+            {t("common.loadMore")}
+          </Button>
+        </div>
       )}
       {archiving && <ArchiveCompletedDialog onClose={() => setArchiving(false)} />}
     </PageFrame>

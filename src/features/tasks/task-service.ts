@@ -139,6 +139,10 @@ export function createTaskService(db: SqlExecutor, clock: Clock) {
       return read.tasks.list(filter);
     },
 
+    count(filter: TaskFilter = {}): Promise<number> {
+      return read.tasks.count(filter);
+    },
+
     get(id: string): Promise<Task | null> {
       return read.tasks.get(id);
     },

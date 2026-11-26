@@ -101,7 +101,24 @@ dashboard, notifications, tray and startup settings shipped in earlier phases.)
 
 JSON export, validated restore with preview and safety backup, scheduled auto-backup with retention, CSV export, the undo stack (`Ctrl+Z` + toasts), archiving completed tasks and projects, the full Settings page (accent, density, sidebar, dashboard, notifications, tray, startup, backup), and first-launch onboarding.
 
-## Phase 8 — Testing, polish, release 🏁
+## Phase 8 — Testing, polish, release 🏁 ✅
+
+Delivered:
+
+- **Performance at 10,000 tasks:** `npm run perf` seeds 10k tasks with history, times the hot
+  paths and asserts index use with no full scans. Project progress is now a single grouped
+  query (82 → 4 ms). Long lists render only visible rows (All tasks: 60 of 6,635 rows, about
+  0.5 s). The Board renders 100 cards per column with "Show more", and its closed columns show
+  the 50 most recent with true totals (2.6 → 0.4 s). Completed is paged (1.9 → 0.2 s).
+- **Code splitting:** pages load on demand. The startup bundle went from 1.42 MB to 457 KB, and
+  the charts load only with Analytics.
+- **Accessibility:** an axe-core audit of every page and overlay (`npm run a11y`) is at zero
+  WCAG 2.1 A/AA violations. Fixes: text contrast (subtle text and filled accent buttons ≥ 4.5:1),
+  no nested interactive controls in task rows, and board cards named by their full content.
+  Chart animation is shortened and off when reduced motion is requested.
+- **Release:** version 1.0.0, installer metadata, a per-user NSIS install, the owner's logo as
+  the app icon and the sidebar mark, and release builds that block browser reload, print and
+  context menus outside text fields. `RELEASE_NOTES.md`.
 
 Full regression pass. Performance with 10k+ seeded tasks (virtualized lists, query plans checked with `EXPLAIN QUERY PLAN`). Accessibility pass (focus rings, keyboard paths, ARIA). Optional WebdriverIO + `tauri-driver` E2E. App icon, version metadata, and the NSIS installer.
 

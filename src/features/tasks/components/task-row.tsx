@@ -19,19 +19,14 @@ export function TaskRow({ task, onOpen, onStatusChange, showProject = true }: Ta
   const closed = task.status === "completed" || task.status === "cancelled";
 
   return (
+    // The row is clickable with the mouse; for keyboard and screen readers the title is the
+    // button that opens the task, and the status toggle is a separate button (never nested).
     <div
-      role="button"
-      tabIndex={0}
       onClick={() => onOpen(task.id)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onOpen(task.id);
-        }
-      }}
       className={cn(
-        "group flex h-row items-center gap-2 border-b border-line/60 px-(--tf-page-x) text-sm outline-none",
-        "transition-colors hover:bg-hover focus-visible:bg-hover focus-visible:shadow-[inset_2px_0_0_var(--color-accent)]",
+        "group flex h-row cursor-default items-center gap-2 border-b border-line/60 px-(--tf-page-x) text-sm",
+        "transition-colors hover:bg-hover has-[[data-open]:focus-visible]:bg-hover",
+        "has-[[data-open]:focus-visible]:shadow-[inset_2px_0_0_var(--color-accent)]",
       )}
     >
       <span title={t(`priority.${task.priority}`)} className="inline-flex">
@@ -39,14 +34,20 @@ export function TaskRow({ task, onOpen, onStatusChange, showProject = true }: Ta
       </span>
       <StatusToggle status={task.status} onChange={(status) => onStatusChange(task.id, status)} />
 
-      <span
+      <button
+        type="button"
+        data-open
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen(task.id);
+        }}
         className={cn(
-          "min-w-0 truncate",
+          "min-w-0 truncate rounded-xs text-start outline-none",
           closed ? "text-fg-subtle line-through decoration-fg-subtle/50" : "text-fg",
         )}
       >
         {task.title}
-      </span>
+      </button>
 
       {task.subtaskCount > 0 && (
         <span className="inline-flex shrink-0 items-center gap-1 text-xs text-fg-subtle tabular-nums">
