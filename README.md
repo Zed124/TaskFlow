@@ -8,14 +8,14 @@
 
 No account, no cloud, no tracking. Your tasks, history and time live in one SQLite file on your machine, and the app works fully offline.
 
-![Version](https://img.shields.io/badge/version-1.0.0-8b5cf6)
+![Version](https://img.shields.io/badge/version-1.1.0-8b5cf6)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078d4)
 ![Tauri](https://img.shields.io/badge/Tauri-2-24c8db?logo=tauri&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-local-003b57?logo=sqlite&logoColor=white)
 
-**[Download 1.0.0](https://github.com/Zed124/TaskFlow/releases/latest)** · [Features](#features) · [Screenshots](#screenshots) · [Getting started](#getting-started) · [How it works](#how-it-works) · [Docs](#documentation)
+**[Download 1.1.0](https://github.com/Zed124/TaskFlow/releases/latest)** · [Features](#features) · [Screenshots](#screenshots) · [Getting started](#getting-started) · [How it works](#how-it-works) · [Docs](#documentation)
 
 <br />
 
@@ -124,7 +124,7 @@ All parts are optional and can go anywhere in the text.
 
 ### Install
 
-Download `TaskFlow_1.0.0_x64-setup.exe` from the [latest release](https://github.com/Zed124/TaskFlow/releases/latest)
+Download `TaskFlow_1.1.0_x64-setup.exe` from the [latest release](https://github.com/Zed124/TaskFlow/releases/latest)
 and run it. It installs for your user only, so no administrator rights are needed. An `.msi` is
 also available.
 
@@ -240,7 +240,7 @@ npm run a11y         # accessibility audit (with the app running)
 | [Database](docs/database.md)                           | Schema, invariants, event types                          |
 | [Roadmap](docs/roadmap.md)                             | What each phase delivered and what's next                |
 | [Manual test checklist](docs/manual-test-checklist.md) | Windows-only behavior: tray, autostart, notifications    |
-| [Release notes](RELEASE_NOTES.md)                      | What's in 1.0.0 and known limitations                    |
+| [Release notes](RELEASE_NOTES.md)                      | What's new in each version, and known limitations        |
 | [AGENTS.md](AGENTS.md)                                 | Conventions and rules for contributors and coding agents |
 
 ## Roadmap

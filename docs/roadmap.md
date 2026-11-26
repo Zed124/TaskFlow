@@ -122,6 +122,12 @@ Delivered:
 
 Full regression pass. Performance with 10k+ seeded tasks (virtualized lists, query plans checked with `EXPLAIN QUERY PLAN`). Accessibility pass (focus rings, keyboard paths, ARIA). Optional WebdriverIO + `tauri-driver` E2E. App icon, version metadata, and the NSIS installer.
 
+## 1.1: Themes
+
+Light, Dark, Midnight, Dusk and Paper themes plus System (follows Windows). Each theme is one
+block of CSS variables; the title bar and startup window background follow the saved theme.
+Contrast ≥ 4.5:1 and a clean axe audit in every theme.
+
 ## Explicitly out of scope (v1)
 
 Cloud sync and accounts, recurring tasks, an embedded AI assistant, a global Windows hotkey, multi-user and enterprise features.

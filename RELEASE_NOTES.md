@@ -1,3 +1,26 @@
+# TaskFlow 1.1.0
+
+## Themes
+
+TaskFlow now comes in five themes: **Light**, **Dark**, **Midnight** (near-black), **Dusk** (deep
+blue) and **Paper** (warm). Choose **System** to follow Windows' light or dark setting
+automatically. Pick one in **Settings → Appearance**, or press **Ctrl+K** and type "theme".
+
+- The whole app changes with the theme, including the window title bar, scrollbars, dialogs,
+  date and time pickers, project and category colors, and charts.
+- The window opens in your theme straight away, with no dark flash on light themes.
+- Every accent color works with every theme.
+- Dark is still the default, so nothing changes until you choose another theme.
+- Text stays readable in every theme: contrast is at least 4.5:1 throughout, and every page
+  passes the WCAG 2.1 A/AA accessibility checks in all five themes.
+
+## Upgrading
+
+Run `TaskFlow_1.1.0_x64-setup.exe` over your existing install. Your tasks, history and settings
+are kept.
+
+---
+
 # TaskFlow 1.0.0
 
 A local-first personal task manager for Windows. Everything stays on this PC and works offline.
