@@ -16,19 +16,20 @@ Read before substantial work:
 
 Toolchain: Node 26 LTS, Rust stable (MSVC), VS 2022 Build Tools (C++ workload), WebView2.
 
-| Task                     | Command                                                        |
-| ------------------------ | -------------------------------------------------------------- |
-| Install deps             | `npm install`                                                  |
-| Run app (dev)            | `npm run tauri dev`                                            |
-| Typecheck · lint · tests | `npm run check`                                                |
-| Typecheck                | `npm run typecheck`                                            |
-| Lint / format            | `npm run lint` · `npm run format`                              |
-| TS tests                 | `npm test` (Vitest, uses `node:sqlite`, requires Node ≥ 22.13) |
-| Rust tests               | `npm run test:rust`                                            |
-| Production build         | `npm run tauri build` → `src-tauri/target/release/bundle/`     |
-| Perf check (10k tasks)   | `$env:PERF=1; npm run perf` (skipped in normal test runs)      |
-| Accessibility audit      | `npm run a11y` (with `scripts/dev-inspect.ps1` running)        |
-| Regenerate app icons     | `npm run icons` (from the owner's `app-icon.svg`)              |
+| Task                     | Command                                                                                                                                               |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Install deps             | `npm install`                                                                                                                                         |
+| Run app (dev)            | `npm run tauri dev`                                                                                                                                   |
+| Typecheck · lint · tests | `npm run check`                                                                                                                                       |
+| Typecheck                | `npm run typecheck`                                                                                                                                   |
+| Lint / format            | `npm run lint` · `npm run format`                                                                                                                     |
+| TS tests                 | `npm test` (Vitest, uses `node:sqlite`, requires Node ≥ 22.13)                                                                                        |
+| Rust tests               | `npm run test:rust`                                                                                                                                   |
+| Production build         | `npm run tauri build` → `src-tauri/target/release/bundle/`                                                                                            |
+| Perf check (10k tasks)   | `$env:PERF=1; npm run perf` (skipped in normal test runs)                                                                                             |
+| Accessibility audit      | `npm run a11y` (with `scripts/dev-inspect.ps1` running)                                                                                               |
+| Regenerate app icons     | `npm run icons` (from the owner's `app-icon.svg`)                                                                                                     |
+| README screenshots       | seed the demo profile (see `src/test/demo/seed-demo.test.ts`), run `dev-inspect.ps1 -Identifier com.taskflow.demo`, save shots to `docs/screenshots/` |
 
 Before you say a change is done: run `npm run check`. Run `npm run test:rust` if you touched Rust, and `npm run tauri build` at milestones.
 
