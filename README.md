@@ -109,26 +109,76 @@ also available.
 The installer isn't code-signed yet, so Windows SmartScreen may say "Windows protected your PC".
 Choose **More info**, then **Run anyway**.
 
+### Move your tasks to another PC
+
+Your data stays on the PC where you created it, so a new install starts empty. To copy your tasks
+over, open **Settings → Backups and data** on the old PC and choose **Export backup…**. Copy the
+file across, then choose **Restore from backup…** in TaskFlow on the new PC. This is a one-time
+copy, not sync.
+
 ### Build from source
 
-#### Requirements
+These steps set up a Windows PC to develop and build TaskFlow. You only install the tools once,
+which takes about 15 to 20 minutes, mostly for the Visual Studio Build Tools.
 
-- Windows 10 or 11 with WebView2 (built into Windows 11)
-- [Node.js](https://nodejs.org/) 22.13 or later
-- [Rust](https://rustup.rs/) stable (MSVC) and Visual Studio 2022 Build Tools with the C++ workload
+#### 1. Install the tools
 
-#### Run and build
+Run each command in PowerShell:
 
 ```powershell
+winget install --id Git.Git -e
+winget install --id GitHub.cli -e
+winget install --id OpenJS.NodeJS.LTS -e
+winget install --id Rustlang.Rustup -e
+winget install --id Microsoft.VisualStudio.2022.BuildTools -e --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+```
+
+| Tool                                 | Why it's needed                                                                        |
+| ------------------------------------ | -------------------------------------------------------------------------------------- |
+| Git and GitHub CLI                   | Get the code and sign in to GitHub (the repository is private)                         |
+| Node.js 22.13 or later               | Runs the build tools and the TypeScript tests                                          |
+| Rust (stable, MSVC)                  | Compiles the native Tauri app                                                          |
+| Visual Studio 2022 Build Tools (C++) | The C++ compiler and linker Rust uses on Windows                                       |
+| WebView2                             | Renders the app. Built into Windows 11; the installer adds it on Windows 10 if missing |
+
+Close and reopen PowerShell afterwards so it finds the new tools.
+
+#### 2. Sign in and get the code
+
+```powershell
+gh auth login
+gh repo clone Zed124/TaskFlow
+cd TaskFlow
 npm install
+```
+
+For `gh auth login`, choose **GitHub.com**, **HTTPS**, and **Login with a web browser**.
+
+#### 3. Run, test and build
+
+```powershell
 npm run tauri dev      # run the app in development
 npm run check          # typecheck, lint and tests
+npm run test:rust      # Rust tests
 npm run tauri build    # build the installers
 ```
 
-The build puts an NSIS installer (`TaskFlow_1.0.0_x64-setup.exe`, per-user, no admin rights needed) and an `.msi` in `src-tauri\target\release\bundle\`.
+The first `npm run tauri dev` takes several minutes while Rust compiles everything. Later runs
+start in seconds. `npm run tauri build` puts the setup `.exe` and the `.msi` in
+`src-tauri\target\release\bundle\`.
 
-Your data lives in `%APPDATA%\com.taskflow.app`, and automatic backups go to `Documents\TaskFlow Backups`.
+Your data lives in `%APPDATA%\com.taskflow.app`, and automatic backups go to
+`Documents\TaskFlow Backups`. The development app and an installed copy on the same PC share
+that data.
+
+#### Working on more than one PC
+
+Pull before you start and push when you finish, so both PCs stay on the same code:
+
+```powershell
+git pull     # before you start
+git push     # after you commit
+```
 
 ## How it works
 
