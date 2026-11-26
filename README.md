@@ -45,6 +45,7 @@ every status change, every completion and every minute you tracked, without send
 | 📊 **Analytics**           | Completed vs. created trends, lead time, time in progress, tracked work and priority mix, by day, week or month                                 |
 | 🪟 **Windows integration** | System tray with timer controls, close to tray, start with Windows, due-time reminders, overdue alerts, daily summary, single instance          |
 | 🛟 **Data safety**         | Automatic daily backups with retention, export, checked restore with a safety copy, CSV export, undo                                            |
+| 🎨 **Themes**              | Light, Dark, Midnight, Dusk and Paper, or System to follow Windows. The whole app follows, title bar included, with seven accent colors         |
 | ♿ **Accessible**          | Every page passes axe-core WCAG 2.1 A/AA checks, contrast is at least 4.5:1, and everything works by keyboard                                   |
 
 ## Screenshots
@@ -73,6 +74,27 @@ every status change, every completion and every minute you tracked, without send
   <tr>
     <td align="center"><b>Ctrl+K</b>: search everything and run commands</td>
     <td align="center"><b>Projects</b>: progress at a glance</td>
+  </tr>
+</table>
+
+### Themes
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/theme-light.png" alt="Dashboard in the Light theme" /></td>
+    <td width="50%"><img src="docs/screenshots/theme-dusk.png" alt="Board in the Dusk theme" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Light</b></td>
+    <td align="center"><b>Dusk</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/theme-paper.png" alt="Analytics in the Paper theme" /></td>
+    <td><img src="docs/screenshots/theme-picker.png" alt="Theme picker in Settings with previews of every theme" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Paper</b></td>
+    <td align="center"><b>Settings → Appearance</b>: pick a theme, or System to follow Windows</td>
   </tr>
 </table>
 
@@ -200,7 +222,7 @@ flowchart LR
 
 ## Quality
 
-- **117 TypeScript tests and 12 Rust tests**, covering task history, completions, subtasks, search, filters, the board, time tracking, analytics, notifications, backup and restore, CSV export, migrations and settings.
+- **121 TypeScript tests and 14 Rust tests**, covering task history, completions, subtasks, search, filters, the board, time tracking, analytics, notifications, backup and restore, CSV export, migrations and settings.
 - **Tested at scale:** a performance check against 10,000 tasks with full history. Most queries finish in under 10 ms, and long lists render only their visible rows.
 - **Accessibility audit** with axe-core on every page, the task panel, the create dialog and the command palette.
 

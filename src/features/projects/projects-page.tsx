@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
-import { entityColorHex } from "@/domain/colors";
+import { entityColor } from "@/domain/colors";
 import { cn } from "@/lib/cn";
 import { ProjectFormDialog } from "./components/project-form-dialog";
 import { ProjectMenu } from "./components/project-menu";
@@ -74,7 +74,7 @@ export function ProjectsPage() {
                 <div className="flex items-center gap-2.5">
                   <span
                     className="size-2.5 shrink-0 rounded-xs"
-                    style={{ backgroundColor: entityColorHex(p.color) }}
+                    style={{ backgroundColor: entityColor(p.color) }}
                     aria-hidden
                   />
                   <span className="min-w-0 flex-1 truncate text-sm font-medium text-fg">
@@ -97,7 +97,7 @@ export function ProjectsPage() {
                 {p.description && (
                   <p className="line-clamp-2 text-xs text-fg-muted">{p.description}</p>
                 )}
-                <ProgressBar progress={p.progress} color={entityColorHex(p.color)} />
+                <ProgressBar progress={p.progress} color={entityColor(p.color)} />
               </div>
             </li>
           ))}

@@ -1,7 +1,16 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { FolderKanban, FolderPlus, PanelLeft, Plus, Rows3, type LucideIcon } from "lucide-react";
+import {
+  FolderKanban,
+  FolderPlus,
+  Palette,
+  PanelLeft,
+  Plus,
+  Rows3,
+  type LucideIcon,
+} from "lucide-react";
+import { THEME_CHOICES } from "@/domain/themes";
 import { navItems } from "@/app/navigation";
 import { useUiStore } from "@/app/ui-store";
 import { useSetting } from "@/features/settings/use-settings";
@@ -25,6 +34,7 @@ export function useCommands(): PaletteCommand[] {
   const openCreateProject = useUiStore((s) => s.setCreateProjectOpen);
   const [collapsed, setCollapsed] = useSetting("ui.sidebarCollapsed");
   const [density, setDensity] = useSetting("ui.density");
+  const [theme, setTheme] = useSetting("ui.theme");
   const { data: projects = [] } = useProjects();
 
   return useMemo(() => {
@@ -75,6 +85,13 @@ export function useCommands(): PaletteCommand[] {
         keywords: "density compact comfortable layout",
         run: () => setDensity(next),
       },
+      ...THEME_CHOICES.filter((choice) => choice !== theme).map((choice) => ({
+        id: `theme-${choice}`,
+        label: t("commands.useTheme", { theme: t(`settings.themes.${choice}.name`) }),
+        icon: Palette,
+        keywords: "theme appearance color light dark mode",
+        run: () => setTheme(choice),
+      })),
     ];
     return commands;
   }, [
@@ -86,6 +103,8 @@ export function useCommands(): PaletteCommand[] {
     setCollapsed,
     density,
     setDensity,
+    theme,
+    setTheme,
     projects,
   ]);
 }

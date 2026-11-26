@@ -1,4 +1,4 @@
-import { entityColorHex } from "@/domain/colors";
+import { entityColor } from "@/domain/colors";
 import { cn } from "@/lib/cn";
 
 /** Small swatch for a project/category color token. */
@@ -13,7 +13,7 @@ export function ColorDot({
     <span
       aria-hidden
       className={cn("inline-block size-2 shrink-0 rounded-full", className)}
-      style={{ backgroundColor: entityColorHex(color) }}
+      style={{ backgroundColor: entityColor(color) }}
     />
   );
 }

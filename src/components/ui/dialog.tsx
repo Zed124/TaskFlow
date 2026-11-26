@@ -26,7 +26,7 @@ export function Dialog({
   return (
     <D.Root open={open} onOpenChange={onOpenChange}>
       <D.Portal>
-        <D.Overlay className="fixed inset-0 z-40 animate-fade-in bg-black/55" />
+        <D.Overlay className="fixed inset-0 z-40 animate-fade-in bg-scrim" />
         <D.Content
           className={cn(
             "fixed top-[12vh] left-1/2 z-50 w-[min(520px,calc(100vw-32px))] -translate-x-1/2 animate-pop-in",

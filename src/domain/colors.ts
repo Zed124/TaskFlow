@@ -1,17 +1,18 @@
 /**
  * Color tokens for projects and categories. Stored by name in the DB, so the palette can be
- * retuned without a migration. These hex values are the one sanctioned place for raw colors.
+ * retuned without a migration. Each name maps to a CSS variable whose value depends on the theme
+ * (lighter steps on dark themes, deeper ones on light themes; see src/styles/index.css).
  */
 export const ENTITY_COLORS = {
-  slate: "#8f9bb3",
-  violet: "#a78bfa",
-  blue: "#60a5fa",
-  teal: "#2dd4bf",
-  green: "#4ade80",
-  amber: "#fbbf24",
-  orange: "#fb923c",
-  rose: "#fb7185",
-  pink: "#f472b6",
+  slate: "var(--tf-entity-slate)",
+  violet: "var(--tf-entity-violet)",
+  blue: "var(--tf-entity-blue)",
+  teal: "var(--tf-entity-teal)",
+  green: "var(--tf-entity-green)",
+  amber: "var(--tf-entity-amber)",
+  orange: "var(--tf-entity-orange)",
+  rose: "var(--tf-entity-rose)",
+  pink: "var(--tf-entity-pink)",
 } as const;
 
 export type EntityColor = keyof typeof ENTITY_COLORS;
@@ -21,6 +22,7 @@ export function isEntityColor(value: string | null | undefined): value is Entity
   return value != null && Object.hasOwn(ENTITY_COLORS, value);
 }
 
-export function entityColorHex(value: string | null | undefined): string {
+/** A CSS color for an entity color name (falls back to slate). */
+export function entityColor(value: string | null | undefined): string {
   return isEntityColor(value) ? ENTITY_COLORS[value] : ENTITY_COLORS.slate;
 }

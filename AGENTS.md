@@ -94,7 +94,8 @@ Views: every list is a `TaskFilter` (see `domain/smart-lists.ts`); add a view by
 not a new query. Board moves go through `tasks.move` (status + position in one transaction).
 Task drawer: open any task with `useTaskDrawer().open(id)` (it sets `?task=<id>`).
 Adding a migration: create `src/db/migrations/NNNN_name.sql` (the next number) and extend `src/db/schema.test.ts`.
-Design tokens: use `bg-canvas/surface/raised/overlay`, `text-fg/fg-muted/fg-subtle`, `border-line/line-strong`, and `accent`, `accent-soft` and `accent-text`. Never use raw hex in components (the accent swatches on the Settings page are the one documented exception).
+Design tokens: use `bg-canvas/surface/raised/overlay/well/card`, `text-fg/fg-muted/fg-subtle`, `border-line/line-strong`, `bg-scrim`, and `accent`, `accent-soft` and `accent-text`. Never use raw hex in components (the accent swatches on the Settings page and the theme previews from `domain/themes.ts` are the documented exceptions). Project/category colors (`entityColor`) and chart series (`SERIES`) are CSS variables, so they follow the theme.
+Themes: each theme is one block of `--tf-*` variables in `styles/index.css` (`[data-theme=…]`), with `data-mode` light/dark choosing accent-text, entity and chart steps. Adding a theme: add the CSS block (same variables as Dark), an entry in `domain/themes.ts` and `THEME_CANVAS` in `desktop.rs` (startup window background), and strings under `settings.themes`; `themes.test.ts` checks they agree. Check text contrast (≥ 4.5:1 on every surface) and run `npm run a11y` with the theme selected.
 
 ## Architecture rules (non-negotiable)
 

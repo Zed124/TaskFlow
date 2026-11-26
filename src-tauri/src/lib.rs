@@ -32,6 +32,7 @@ pub fn run() {
             let dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&dir)?;
             let database = db::Db::open(&dir.join(DB_FILE_NAME))?;
+            desktop::apply_saved_theme(app.handle(), &database);
             app.manage(database);
 
             desktop::create_tray(app.handle())?;

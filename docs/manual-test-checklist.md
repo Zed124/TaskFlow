@@ -4,16 +4,19 @@ These are behaviours that automated tests cannot cover (the real WebView2 window
 
 ## Foundation (Phase 2)
 
-| #   | Step                                                                            | Expected                                                                                                                  |
-| --- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| F1  | Delete `%APPDATA%\com.taskflow.app\` (or use a fresh profile) and start the app | "Opening your workspace" shows briefly, then the Dashboard placeholder. `taskflow.db` exists with `schema_migrations` v1. |
-| F2  | Press `Ctrl+B`                                                                  | The sidebar collapses to icons. Hovering an icon shows its label in a tooltip.                                            |
-| F3  | Close and restart the app                                                       | The sidebar is still collapsed.                                                                                           |
-| F4  | Settings → pick an accent, switch density to Compact                            | The accent changes immediately (app mark, active rail, focus ring). The page padding tightens.                            |
-| F5  | Restart the app                                                                 | The accent and density persist, with no flash of violet on startup.                                                       |
-| F6  | Click through every sidebar item                                                | Each unbuilt page shows "_X_ isn't built yet" with its planned phase. None shows fake data.                               |
-| F7  | Press `Tab` through the sidebar and Settings                                    | A visible focus ring is on every control. Space or Enter toggles switches and selects swatches.                           |
-| F8  | Run `npm run dev` alone and open http://localhost:1420 in a browser             | The app shows the "running in a browser tab" error rather than crashing.                                                  |
+| #   | Step                                                                                          | Expected                                                                                                                  |
+| --- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| F1  | Delete `%APPDATA%\com.taskflow.app\` (or use a fresh profile) and start the app               | "Opening your workspace" shows briefly, then the Dashboard placeholder. `taskflow.db` exists with `schema_migrations` v1. |
+| F2  | Press `Ctrl+B`                                                                                | The sidebar collapses to icons. Hovering an icon shows its label in a tooltip.                                            |
+| F3  | Close and restart the app                                                                     | The sidebar is still collapsed.                                                                                           |
+| F4  | Settings → pick an accent, switch density to Compact                                          | The accent changes immediately (app mark, active rail, focus ring). The page padding tightens.                            |
+| F5  | Restart the app                                                                               | The accent and density persist, with no flash of violet on startup.                                                       |
+| F6  | Settings → Theme: try Light, Midnight, Dusk and Paper                                         | The whole app and the window title bar switch at once. Date and time pickers, scrollbars and dialogs match the theme.     |
+| F7  | Pick Paper (or Light), quit from the tray and start again                                     | The window opens in that theme straight away, with no dark flash before the app appears.                                  |
+| F8  | Pick System, then switch Windows between light and dark (Settings → Personalization → Colors) | TaskFlow follows within a second, title bar included, without a restart.                                                  |
+| F6  | Click through every sidebar item                                                              | Each unbuilt page shows "_X_ isn't built yet" with its planned phase. None shows fake data.                               |
+| F7  | Press `Tab` through the sidebar and Settings                                                  | A visible focus ring is on every control. Space or Enter toggles switches and selects swatches.                           |
+| F8  | Run `npm run dev` alone and open http://localhost:1420 in a browser                           | The app shows the "running in a browser tab" error rather than crashing.                                                  |
 
 Last run: 2026-11-26 by Claude, using window screenshots, synthetic clicks and keys, and direct read-only inspection of the DB.
 

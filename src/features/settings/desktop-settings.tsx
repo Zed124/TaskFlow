@@ -136,7 +136,7 @@ export function DesktopSettings() {
               value={digestTime}
               disabled={!enabled || !digest}
               onChange={(e) => e.target.value && setDigestTime(e.target.value)}
-              className="h-7 rounded-sm border border-line bg-canvas px-2 text-xs text-fg [color-scheme:dark] disabled:opacity-50"
+              className="h-7 rounded-sm border border-line bg-canvas px-2 text-xs text-fg disabled:opacity-50"
             />
             <Switch
               id="notify-digest"

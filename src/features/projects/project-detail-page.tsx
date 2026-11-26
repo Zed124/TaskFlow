@@ -6,7 +6,7 @@ import { useUiStore } from "@/app/ui-store";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { entityColorHex } from "@/domain/colors";
+import { entityColor } from "@/domain/colors";
 import type { TaskFilter } from "@/domain/task-filter";
 import { TaskFilters } from "@/features/tasks/components/task-filters";
 import { TaskList } from "@/features/tasks/components/task-list";
@@ -49,7 +49,7 @@ export function ProjectDetailPage() {
     );
   }
 
-  const color = entityColorHex(project.color);
+  const color = entityColor(project.color);
   return (
     <div className="flex min-h-full flex-col">
       <header className="border-b border-line px-(--tf-page-x) pt-4 pb-4">

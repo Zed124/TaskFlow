@@ -45,6 +45,62 @@ pub struct TrayItems {
     stop: MenuItem<tauri::Wry>,
 }
 
+/// Window background per theme. Must match `preview.canvas` in src/domain/themes.ts
+/// (themes.test.ts checks it), so the window never flashes the wrong color at startup.
+pub const THEME_CANVAS: [(&str, &str); 5] = [
+    ("light", "#f7f7f9"),
+    ("dark", "#131318"),
+    ("midnight", "#08080a"),
+    ("dusk", "#10141f"),
+    ("paper", "#f4f0e8"),
+];
+
+/// Title bar mode (None = follow Windows) and background for a saved theme choice.
+/// Unknown values fall back to Dark, the default.
+pub fn window_theme(choice: &str, system_light: bool) -> (Option<tauri::Theme>, &'static str) {
+    let resolved = match choice {
+        "system" if system_light => "light",
+        "system" => "dark",
+        other => other,
+    };
+    let canvas = THEME_CANVAS
+        .iter()
+        .find(|(name, _)| *name == resolved)
+        .map_or(THEME_CANVAS[1].1, |(_, hex)| *hex);
+    let mode = match (choice, resolved) {
+        ("system", _) => None,
+        (_, "light" | "paper") => Some(tauri::Theme::Light),
+        _ => Some(tauri::Theme::Dark),
+    };
+    (mode, canvas)
+}
+
+fn parse_hex(hex: &str) -> Option<tauri::window::Color> {
+    let h = hex.strip_prefix('#')?;
+    let byte = |i: usize| u8::from_str_radix(h.get(i..i + 2)?, 16).ok();
+    Some(tauri::window::Color(byte(0)?, byte(2)?, byte(4)?, 255))
+}
+
+/// Styles the (still hidden) main window from the saved theme before it is shown. On a first run
+/// the settings table doesn't exist yet, which simply means the default theme.
+pub fn apply_saved_theme<R: Runtime>(app: &AppHandle<R>, db: &crate::db::Db) {
+    let Some(window) = app.get_webview_window(MAIN_WINDOW) else { return };
+    let choice = db
+        .select("SELECT value FROM settings WHERE key = 'ui.theme'", &[])
+        .ok()
+        .and_then(|rows| rows.into_iter().next())
+        .and_then(|row| row.get("value").and_then(|v| v.as_str()).map(str::to_owned))
+        .and_then(|raw| serde_json::from_str::<String>(&raw).ok())
+        .unwrap_or_else(|| "dark".to_owned());
+    if choice == "system" {
+        let _ = window.set_theme(None);
+    }
+    let system_light = matches!(window.theme(), Ok(tauri::Theme::Light));
+    let (mode, canvas) = window_theme(&choice, system_light);
+    let _ = window.set_theme(mode);
+    let _ = window.set_background_color(parse_hex(canvas));
+}
+
 /// True when Windows launched us at sign-in (autostart passes `--minimized`).
 pub fn launched_minimized<I: IntoIterator<Item = String>>(args: I) -> bool {
     args.into_iter().any(|a| a == MINIMIZED_ARG)
@@ -190,6 +246,21 @@ pub fn app_request_quit(app: AppHandle) {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn window_theme_matches_choice() {
+        assert_eq!(window_theme("paper", false), (Some(tauri::Theme::Light), "#f4f0e8"));
+        assert_eq!(window_theme("midnight", true), (Some(tauri::Theme::Dark), "#08080a"));
+        assert_eq!(window_theme("system", true), (None, "#f7f7f9"));
+        assert_eq!(window_theme("system", false), (None, "#131318"));
+        assert_eq!(window_theme("bogus", true), (Some(tauri::Theme::Dark), "#131318"));
+    }
+
+    #[test]
+    fn parses_canvas_colors() {
+        assert_eq!(parse_hex("#10141f"), Some(tauri::window::Color(0x10, 0x14, 0x1f, 255)));
+        assert_eq!(parse_hex("oops"), None);
+    }
+
     use super::*;
 
     #[test]

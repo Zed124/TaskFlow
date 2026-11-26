@@ -347,7 +347,7 @@ function BoardColumn({
     <section
       aria-label={label}
       className={cn(
-        "flex min-h-0 min-w-56 flex-col rounded-lg border border-line bg-surface/60 transition-colors",
+        "flex min-h-0 min-w-56 flex-col rounded-lg border border-line bg-well/60 transition-colors",
         isOver && "border-accent/50 bg-accent-soft/30",
       )}
     >
@@ -428,7 +428,7 @@ function CardBody({ task, lifted }: { task: TaskListItem; lifted?: boolean }) {
   return (
     <div
       className={cn(
-        "cursor-grab rounded-md border border-line bg-raised px-3 py-2.5 text-sm transition-shadow hover:border-line-strong",
+        "cursor-grab rounded-md border border-line bg-card px-3 py-2.5 text-sm transition-shadow hover:border-line-strong",
         lifted && "rotate-[1.5deg] cursor-grabbing border-accent/50 shadow-popover",
       )}
     >

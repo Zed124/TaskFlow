@@ -14,7 +14,7 @@ $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [En
 $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = "--remote-debugging-port=9333"
 $config = Join-Path $env:TEMP "taskflow-dev-inspect.json"
 $window = @{ label = "main"; title = "TaskFlow"; width = 1240; height = 760; minWidth = 900; minHeight = 560;
-  center = $true; theme = "Dark"; backgroundColor = "#0c0c10"; focus = $false; visible = $false }
+  center = $true; theme = "Dark"; backgroundColor = "#131318"; focus = $false; visible = $false }
 $conf = @{ app = @{ windows = @($window) } }
 if ($Identifier) { $conf.identifier = $Identifier }
 $conf | ConvertTo-Json -Depth 5 | Set-Content -Path $config -Encoding ascii

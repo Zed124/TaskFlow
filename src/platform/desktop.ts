@@ -4,6 +4,8 @@
  */
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
 import {
   isPermissionGranted,
@@ -44,6 +46,30 @@ export const lifecycle = {
           if (e.payload === "toggle" || e.payload === "stop") handler(e.payload);
         })
       : Promise.resolve(() => undefined),
+};
+
+/** Native window chrome: title bar light/dark and the background shown before the page paints. */
+export const appWindow = {
+  /** Title bar light/dark; null = follow Windows' app theme. */
+  setTheme: async (mode: "light" | "dark" | null) => {
+    if (inDesktop()) await getCurrentWindow().setTheme(mode);
+  },
+  /** Window and webview background (seen while resizing and before the page paints). */
+  setBackground: async (color: string) => {
+    if (inDesktop()) await getCurrentWebviewWindow().setBackgroundColor(color);
+  },
+  /** Windows' current app theme (light or dark). Only meaningful while following the system. */
+  systemMode: async (): Promise<"light" | "dark"> => {
+    if (inDesktop()) return (await getCurrentWindow().theme()) ?? "dark";
+    return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  },
+  onSystemModeChanged: (handler: (mode: "light" | "dark") => void): Promise<UnlistenFn> => {
+    if (inDesktop()) return getCurrentWindow().onThemeChanged((e) => handler(e.payload));
+    const query = window.matchMedia("(prefers-color-scheme: light)");
+    const listener = () => handler(query.matches ? "light" : "dark");
+    query.addEventListener("change", listener);
+    return Promise.resolve(() => query.removeEventListener("change", listener));
+  },
 };
 
 /** "Start with Windows" — the registry Run key is the source of truth, not a setting. */

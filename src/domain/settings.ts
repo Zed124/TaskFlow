@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { DEFAULT_DASHBOARD_LAYOUT, dashboardLayoutSchema } from "./dashboard";
+import { THEME_CHOICES } from "./themes";
 
 export const ACCENTS = ["violet", "indigo", "blue", "teal", "emerald", "amber", "rose"] as const;
 export type Accent = (typeof ACCENTS)[number];
@@ -17,6 +18,8 @@ function define<S extends z.ZodType>(schema: S, defaultValue: z.infer<S>) {
  */
 export const settingDefinitions = {
   "ui.sidebarCollapsed": define(z.boolean(), false),
+  /** Color theme, or "system" to follow Windows. Dark keeps the original look for existing users. */
+  "ui.theme": define(z.enum(THEME_CHOICES), "dark"),
   "ui.accent": define(z.enum(ACCENTS), "violet"),
   "ui.density": define(z.enum(DENSITIES), "comfortable"),
   "onboarding.completed": define(z.boolean(), false),

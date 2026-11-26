@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Spinner } from "@/components/ui/spinner";
 import { settingsQueryKey } from "@/features/settings/use-settings";
-import { applyAppearance } from "@/features/settings/appearance";
+import { applyAppearance, syncWindowTheme } from "@/features/settings/appearance";
+import { resolveTheme } from "@/domain/themes";
 import { createServices, type Services } from "./services";
 import { ServicesProvider } from "./services-context";
 
@@ -37,7 +38,10 @@ async function bootstrap(t: TFunction): Promise<BootState> {
       queryKey: settingsQueryKey,
       queryFn: () => services.settings.getAll(),
     });
-    applyAppearance(settings["ui.accent"], settings["ui.density"]);
+    const choice = settings["ui.theme"];
+    // A failure to style the native window must never block the app.
+    const theme = await syncWindowTheme(choice).catch(() => resolveTheme(choice, "dark"));
+    applyAppearance({ theme, accent: settings["ui.accent"], density: settings["ui.density"] });
     return { status: "ready", services };
   } catch (error) {
     const detail =

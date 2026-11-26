@@ -2,7 +2,9 @@
 
 /*
  * TaskFlow design tokens.
- * - Neutrals: cool graphite with a faint violet undertone (static).
+ * - Theme: <html data-theme="light|dark|midnight|dusk|paper" data-mode="light|dark"> swaps every
+ *   neutral, status, shadow, entity and chart color. Components only use the token utilities, so a
+ *   theme is one block of variables. Keep src/domain/themes.ts (previews, window background) in sync.
  * - Accent: switchable at runtime via <html data-accent="…">; components only use accent-* utilities.
  * - Density: <html data-density="compact|comfortable"> changes row heights and paddings.
  */
@@ -28,39 +30,10 @@
   --text-2xl: 26px;
   --text-2xl--line-height: 32px;
 
-  --color-canvas: #131318;
-  --color-sidebar: #0f0f13;
-  --color-surface: #19191f;
-  --color-raised: #202028;
-  --color-overlay: #24242d;
-  --color-hover: #ffffff0a;
-  --color-pressed: #ffffff12;
-  --color-line: #26262f;
-  --color-line-strong: #34343f;
-  --color-fg: #e9e9ef;
-  --color-fg-muted: #a1a1b0;
-  /* ≥ 4.5:1 on every surface (WCAG AA for small text). */
-  --color-fg-subtle: #8a8a99;
-  --color-fg-disabled: #4a4a55;
-
-  --color-danger: #f0566a;
-  --color-warning: #e8a23a;
-  --color-success: #3fbf8a;
-  --color-info: #5b9cf5;
-
-  /* Priority: muted by default so lists stay calm; urgent is the only loud one. */
-  --color-priority-low: #6c6c7a;
-  --color-priority-medium: #8f9bb3;
-  --color-priority-high: #e8a23a;
-  --color-priority-urgent: #f0566a;
-
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
-
-  --shadow-popover: 0 0 0 1px #ffffff0d, 0 8px 24px -4px #00000080, 0 2px 6px #00000040;
-  --shadow-drawer: -1px 0 0 #ffffff0d, -16px 0 48px -12px #00000099;
 
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --animate-fade-in: fade-in 140ms var(--ease-out-quart);
@@ -86,8 +59,42 @@
   }
 }
 
-/* Runtime-switchable accent. `inline` makes utilities reference the variables directly. */
+/* Runtime-switchable theme and accent. `inline` makes utilities reference the variables directly. */
 @theme inline {
+  --color-canvas: var(--tf-canvas);
+  --color-sidebar: var(--tf-sidebar);
+  --color-surface: var(--tf-surface);
+  --color-raised: var(--tf-raised);
+  --color-overlay: var(--tf-overlay);
+  /* Recessed areas (board columns) and the cards that sit on them. */
+  --color-well: var(--tf-well);
+  --color-card: var(--tf-card);
+  --color-hover: var(--tf-hover);
+  --color-pressed: var(--tf-pressed);
+  --color-line: var(--tf-line);
+  --color-line-strong: var(--tf-line-strong);
+  --color-fg: var(--tf-fg);
+  --color-fg-muted: var(--tf-fg-muted);
+  /* ≥ 4.5:1 on every surface in every theme (WCAG AA for small text). */
+  --color-fg-subtle: var(--tf-fg-subtle);
+  --color-fg-disabled: var(--tf-fg-disabled);
+  /* Backdrop behind dialogs and the task panel. */
+  --color-scrim: var(--tf-scrim);
+
+  --color-danger: var(--tf-danger);
+  --color-warning: var(--tf-warning);
+  --color-success: var(--tf-success);
+  --color-info: var(--tf-info);
+
+  /* Priority: muted by default so lists stay calm; urgent is the only loud one. */
+  --color-priority-low: var(--tf-priority-low);
+  --color-priority-medium: var(--tf-priority-medium);
+  --color-priority-high: var(--tf-priority-high);
+  --color-priority-urgent: var(--tf-priority-urgent);
+
+  --shadow-popover: var(--tf-shadow-popover);
+  --shadow-drawer: var(--tf-shadow-drawer);
+
   --color-accent: var(--tf-accent);
   --color-accent-hover: var(--tf-accent-hover);
   --color-accent-fg: var(--tf-accent-fg);
@@ -98,6 +105,198 @@
   --color-accent-solid-hover: var(--tf-accent-solid-hover);
   --spacing-row: var(--tf-row-h);
 }
+
+/* ── Themes ── one block per theme; dark is also the fallback. */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --tf-canvas: #131318;
+  --tf-sidebar: #0f0f13;
+  --tf-surface: #19191f;
+  --tf-raised: #202028;
+  --tf-overlay: #24242d;
+  --tf-well: #19191f;
+  --tf-card: #202028;
+  --tf-hover: #ffffff0a;
+  --tf-pressed: #ffffff12;
+  --tf-line: #26262f;
+  --tf-line-strong: #34343f;
+  --tf-fg: #e9e9ef;
+  --tf-fg-muted: #a1a1b0;
+  --tf-fg-subtle: #8a8a99;
+  --tf-fg-disabled: #4a4a55;
+  --tf-scrim: #0000008c;
+  --tf-scrollbar: #ffffff14;
+  --tf-scrollbar-hover: #ffffff24;
+  --tf-danger: #f0566a;
+  --tf-warning: #e8a23a;
+  --tf-success: #3fbf8a;
+  --tf-info: #5b9cf5;
+  --tf-priority-low: #6c6c7a;
+  --tf-priority-medium: #8f9bb3;
+  --tf-priority-high: #e8a23a;
+  --tf-priority-urgent: #f0566a;
+  --tf-shadow-popover: 0 0 0 1px #ffffff0d, 0 8px 24px -4px #00000080, 0 2px 6px #00000040;
+  --tf-shadow-drawer: -1px 0 0 #ffffff0d, -16px 0 48px -12px #00000099;
+}
+[data-theme="midnight"] {
+  color-scheme: dark;
+  --tf-canvas: #08080a;
+  --tf-sidebar: #000000;
+  --tf-surface: #0f0f12;
+  --tf-raised: #16161a;
+  --tf-overlay: #1b1b20;
+  --tf-well: #0f0f12;
+  --tf-card: #16161a;
+  --tf-hover: #ffffff0b;
+  --tf-pressed: #ffffff14;
+  --tf-line: #1e1e24;
+  --tf-line-strong: #2b2b33;
+  --tf-fg: #ededf1;
+  --tf-fg-muted: #a6a6b3;
+  --tf-fg-subtle: #8f8f9d;
+  --tf-fg-disabled: #46464f;
+  --tf-scrim: #000000a6;
+  --tf-scrollbar: #ffffff17;
+  --tf-scrollbar-hover: #ffffff29;
+  --tf-danger: #f0566a;
+  --tf-warning: #e8a23a;
+  --tf-success: #3fbf8a;
+  --tf-info: #5b9cf5;
+  --tf-priority-low: #696975;
+  --tf-priority-medium: #8f9bb3;
+  --tf-priority-high: #e8a23a;
+  --tf-priority-urgent: #f0566a;
+  --tf-shadow-popover: 0 0 0 1px #ffffff12, 0 8px 24px -4px #000000cc, 0 2px 6px #00000080;
+  --tf-shadow-drawer: -1px 0 0 #ffffff12, -16px 0 48px -12px #000000cc;
+}
+[data-theme="dusk"] {
+  color-scheme: dark;
+  --tf-canvas: #10141f;
+  --tf-sidebar: #0c1019;
+  --tf-surface: #151a27;
+  --tf-raised: #1b2131;
+  --tf-overlay: #202738;
+  --tf-well: #151a27;
+  --tf-card: #1b2131;
+  --tf-hover: #c8d7ff0d;
+  --tf-pressed: #c8d7ff17;
+  --tf-line: #232a3b;
+  --tf-line-strong: #30384c;
+  --tf-fg: #e4e8f1;
+  --tf-fg-muted: #a3acc1;
+  --tf-fg-subtle: #8c95ad;
+  --tf-fg-disabled: #465068;
+  --tf-scrim: #04060c99;
+  --tf-scrollbar: #c8d7ff17;
+  --tf-scrollbar-hover: #c8d7ff29;
+  --tf-danger: #f25d70;
+  --tf-warning: #eaa640;
+  --tf-success: #45c290;
+  --tf-info: #6aa6f7;
+  --tf-priority-low: #687290;
+  --tf-priority-medium: #93a0bb;
+  --tf-priority-high: #eaa640;
+  --tf-priority-urgent: #f25d70;
+  --tf-shadow-popover: 0 0 0 1px #c8d7ff10, 0 8px 24px -4px #02040a99, 0 2px 6px #02040a59;
+  --tf-shadow-drawer: -1px 0 0 #c8d7ff10, -16px 0 48px -12px #02040ab3;
+}
+[data-theme="light"] {
+  color-scheme: light;
+  --tf-canvas: #f7f7f9;
+  --tf-sidebar: #efeff3;
+  --tf-surface: #ffffff;
+  --tf-raised: #f3f3f6;
+  --tf-overlay: #ffffff;
+  --tf-well: #eeeef2;
+  --tf-card: #ffffff;
+  --tf-hover: #1a1a3009;
+  --tf-pressed: #1a1a3012;
+  --tf-line: #e4e4ea;
+  --tf-line-strong: #d0d0d9;
+  --tf-fg: #17171c;
+  --tf-fg-muted: #4f4f5c;
+  --tf-fg-subtle: #656573;
+  --tf-fg-disabled: #a9a9b4;
+  --tf-scrim: #14142347;
+  --tf-scrollbar: #1a1a3024;
+  --tf-scrollbar-hover: #1a1a303d;
+  --tf-danger: #c62539;
+  --tf-warning: #9e5700;
+  --tf-success: #12764f;
+  --tf-info: #1d5ccc;
+  --tf-priority-low: #a3a3ae;
+  --tf-priority-medium: #6b7790;
+  --tf-priority-high: #c27400;
+  --tf-priority-urgent: #d42a42;
+  --tf-shadow-popover: 0 0 0 1px #1a1a3014, 0 10px 28px -6px #1a1a3029, 0 2px 6px #1a1a3014;
+  --tf-shadow-drawer: -1px 0 0 #1a1a3014, -16px 0 40px -16px #1a1a3033;
+}
+[data-theme="paper"] {
+  color-scheme: light;
+  --tf-canvas: #f4f0e8;
+  --tf-sidebar: #ebe5d9;
+  --tf-surface: #fbf9f4;
+  --tf-raised: #f1ece2;
+  --tf-overlay: #fffdf9;
+  --tf-well: #ebe5d9;
+  --tf-card: #fdfbf7;
+  --tf-hover: #4a35140c;
+  --tf-pressed: #4a351414;
+  --tf-line: #e2dacb;
+  --tf-line-strong: #cfc4b0;
+  --tf-fg: #2b2520;
+  --tf-fg-muted: #5a5044;
+  --tf-fg-subtle: #6b6154;
+  --tf-fg-disabled: #b2a897;
+  --tf-scrim: #2b201040;
+  --tf-scrollbar: #4a351426;
+  --tf-scrollbar-hover: #4a35143d;
+  --tf-danger: #b4263a;
+  --tf-warning: #8f4f05;
+  --tf-success: #276d4b;
+  --tf-info: #2c5aa8;
+  --tf-priority-low: #ab9f8b;
+  --tf-priority-medium: #7a7466;
+  --tf-priority-high: #b46c00;
+  --tf-priority-urgent: #c42c3f;
+  --tf-shadow-popover: 0 0 0 1px #4a351417, 0 10px 28px -6px #4a35142e, 0 2px 6px #4a351414;
+  --tf-shadow-drawer: -1px 0 0 #4a351417, -16px 0 40px -16px #4a351438;
+}
+/* Project/category colors and chart series: 400 steps on dark themes, deeper steps on light ones.
+   Series values are dataviz-validated per mode (see chart-theme.ts). */
+:root {
+  --tf-entity-slate: #8f9bb3;
+  --tf-entity-violet: #a78bfa;
+  --tf-entity-blue: #60a5fa;
+  --tf-entity-teal: #2dd4bf;
+  --tf-entity-green: #4ade80;
+  --tf-entity-amber: #fbbf24;
+  --tf-entity-orange: #fb923c;
+  --tf-entity-rose: #fb7185;
+  --tf-entity-pink: #f472b6;
+  --tf-series-completed: #3987e5;
+  --tf-series-created: #d95926;
+  --tf-series-tracked: #199e70;
+  --tf-series-open: #c98500;
+}
+[data-mode="light"] {
+  --tf-entity-slate: #64748b;
+  --tf-entity-violet: #7c3aed;
+  --tf-entity-blue: #2563eb;
+  --tf-entity-teal: #0d9488;
+  --tf-entity-green: #16a34a;
+  --tf-entity-amber: #d97706;
+  --tf-entity-orange: #ea580c;
+  --tf-entity-rose: #e11d48;
+  --tf-entity-pink: #db2777;
+  --tf-series-completed: #2a78d6;
+  --tf-series-created: #eb6834;
+  --tf-series-tracked: #1baf7a;
+  --tf-series-open: #eda100;
+}
+
+/* ── Accents ── */
 
 :root,
 [data-accent="violet"] {
@@ -164,6 +363,36 @@
   --tf-accent-solid-hover: #be123c;
 }
 
+/* On light themes, accent text and tints need deeper steps to stay readable. */
+[data-mode="light"] {
+  --tf-accent-soft: #7c3aed1a;
+  --tf-accent-text: #6d28d9;
+}
+[data-mode="light"][data-accent="indigo"] {
+  --tf-accent-soft: #4f46e51a;
+  --tf-accent-text: #4338ca;
+}
+[data-mode="light"][data-accent="blue"] {
+  --tf-accent-soft: #2563eb1a;
+  --tf-accent-text: #1d4ed8;
+}
+[data-mode="light"][data-accent="teal"] {
+  --tf-accent-soft: #0d94881c;
+  --tf-accent-text: #0b625b;
+}
+[data-mode="light"][data-accent="emerald"] {
+  --tf-accent-soft: #0596691c;
+  --tf-accent-text: #036446;
+}
+[data-mode="light"][data-accent="amber"] {
+  --tf-accent-soft: #d977061f;
+  --tf-accent-text: #8f4a06;
+}
+[data-mode="light"][data-accent="rose"] {
+  --tf-accent-soft: #e11d481a;
+  --tf-accent-text: #ac1036;
+}
+
 :root,
 [data-density="comfortable"] {
   --tf-row-h: 36px;
@@ -182,7 +411,6 @@
   }
 
   html {
-    color-scheme: dark;
     background: var(--color-canvas);
   }
 
@@ -219,13 +447,13 @@
     height: 10px;
   }
   ::-webkit-scrollbar-thumb {
-    background: #ffffff14;
+    background: var(--tf-scrollbar);
     border: 3px solid transparent;
     background-clip: padding-box;
     border-radius: 999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background-color: #ffffff24;
+    background-color: var(--tf-scrollbar-hover);
   }
   ::-webkit-scrollbar-track {
     background: transparent;

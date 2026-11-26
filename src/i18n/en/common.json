@@ -312,12 +312,40 @@
     "title": "Settings",
     "appearance": {
       "title": "Appearance",
+      "theme": "Theme",
+      "themeHint": "Applies to the whole app, including the window title bar.",
       "accent": "Accent color",
       "accentHint": "Used for selection, focus and primary actions.",
       "density": "Layout density",
       "densityHint": "Compact fits more rows on screen.",
       "comfortable": "Comfortable",
       "compact": "Compact"
+    },
+    "themes": {
+      "system": {
+        "name": "System",
+        "hint": "Matches Windows"
+      },
+      "light": {
+        "name": "Light",
+        "hint": "Bright and neutral"
+      },
+      "dark": {
+        "name": "Dark",
+        "hint": "Soft graphite"
+      },
+      "midnight": {
+        "name": "Midnight",
+        "hint": "Near black"
+      },
+      "dusk": {
+        "name": "Dusk",
+        "hint": "Deep blue"
+      },
+      "paper": {
+        "name": "Paper",
+        "hint": "Warm and easy on the eyes"
+      }
     },
     "sidebar": {
       "title": "Sidebar",
@@ -522,6 +550,7 @@
     "newProject": "Create project",
     "toggleSidebar": "Toggle sidebar",
     "toggleDensity": "Switch to {{density}} layout",
+    "useTheme": "Use {{theme}} theme",
     "goTo": "Go to {{page}}",
     "openProject": "Open project {{name}}"
   },

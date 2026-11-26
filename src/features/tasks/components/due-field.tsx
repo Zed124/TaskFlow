@@ -8,7 +8,7 @@ interface DueFieldProps {
 }
 
 const input =
-  "h-8 rounded-sm bg-transparent px-2 text-sm text-fg outline-none [color-scheme:dark] hover:bg-hover focus:bg-canvas focus:shadow-[0_0_0_1px_var(--color-line-strong)]";
+  "h-8 rounded-sm bg-transparent px-2 text-sm text-fg outline-none hover:bg-hover focus:bg-canvas focus:shadow-[0_0_0_1px_var(--color-line-strong)]";
 
 /** Native date (and optional time) inputs: keyboard-friendly and localized by the OS. */
 export function DueField({ dueDate, dueTime, onChange }: DueFieldProps) {

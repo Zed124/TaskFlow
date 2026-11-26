@@ -28,7 +28,7 @@ export function Drawer({
   return (
     <D.Root open={open} onOpenChange={onOpenChange}>
       <D.Portal>
-        <D.Overlay className="fixed inset-0 z-30 animate-fade-in bg-black/25" />
+        <D.Overlay className="fixed inset-0 z-30 animate-fade-in bg-scrim/45" />
         <D.Content
           aria-describedby={undefined}
           onOpenAutoFocus={(e) => e.preventDefault()}

@@ -9,6 +9,7 @@ import { useSetting } from "./use-settings";
 import { Row, Section } from "./settings-rows";
 import { DesktopSettings } from "./desktop-settings";
 import { BackupSettings } from "@/features/backup/components/backup-settings";
+import { ThemePicker } from "./theme-picker";
 
 // Swatches show the actual accent value; kept in sync with src/styles/index.css.
 const SWATCH: Record<Accent, string> = {
@@ -23,11 +24,12 @@ const SWATCH: Record<Accent, string> = {
 
 export function SettingsPage() {
   const { t } = useTranslation();
+  const [theme, setTheme, themeState] = useSetting("ui.theme");
   const [accent, setAccent, accentState] = useSetting("ui.accent");
   const [density, setDensity, densityState] = useSetting("ui.density");
   const [collapsed, setCollapsed, collapsedState] = useSetting("ui.sidebarCollapsed");
   const [weekStart, setWeekStart] = useSetting("ui.weekStartsOn");
-  const error = accentState.error ?? densityState.error ?? collapsedState.error;
+  const error = themeState.error ?? accentState.error ?? densityState.error ?? collapsedState.error;
 
   return (
     <div className="mx-auto w-full max-w-2xl px-(--tf-page-x) py-8">
@@ -41,6 +43,11 @@ export function SettingsPage() {
       )}
 
       <Section title={t("settings.appearance.title")}>
+        <div className="pt-3">
+          <p className="text-sm text-fg">{t("settings.appearance.theme")}</p>
+          <p className="mt-0.5 mb-3 text-xs text-fg-subtle">{t("settings.appearance.themeHint")}</p>
+          <ThemePicker value={theme} onChange={setTheme} />
+        </div>
         <Row label={t("settings.appearance.accent")} hint={t("settings.appearance.accentHint")}>
           <div
             role="radiogroup"

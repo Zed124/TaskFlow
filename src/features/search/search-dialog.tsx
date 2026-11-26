@@ -103,7 +103,7 @@ export function SearchDialog() {
   return (
     <D.Root open={open} onOpenChange={setOpen}>
       <D.Portal>
-        <D.Overlay className="fixed inset-0 z-50 animate-fade-in bg-black/45" />
+        <D.Overlay className="fixed inset-0 z-50 animate-fade-in bg-scrim/80" />
         <D.Content
           aria-describedby={undefined}
           className="fixed top-[14vh] left-1/2 z-50 w-[min(640px,calc(100vw-32px))] -translate-x-1/2 animate-pop-in overflow-hidden rounded-lg border border-line-strong bg-surface shadow-popover focus:outline-none"
